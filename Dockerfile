@@ -21,18 +21,24 @@ RUN apt-get update && apt-get install -y \
     libffi-dev \
     musl-dev \
     python3-dev \
+    supervisor \
     && rm -rf /var/lib/apt/lists/*
 
 # Instala dependências Python
 #RUN pip install flower
 RUN pip install -r requirements.txt
+RUN pip install airbyte
+RUN pip install py2neo
 
 RUN python manage.py collectstatic --noinput --no-post-process
 RUN mkdir -p /app/logs
+
+COPY supervisord.conf /etc/supervisord.conf
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 # Inicia com Gunicorn apontando para src.dashboard.wsgi
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--reload", "--timeout=8000", "--workers=2", "dashboard.wsgi:application"]
+#CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--reload", "--timeout=8000", "--workers=2", "dashboard.wsgi:application"]
+CMD ["supervisord", "-c", "/etc/supervisord.conf"]

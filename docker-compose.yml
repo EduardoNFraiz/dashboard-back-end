@@ -12,12 +12,16 @@ services:
     working_dir: /app/src
     depends_on:
       - db
+      - redis
     env_file:
       - .env
-    
+    environment:
+      - PYTHONPATH=/app/src
+    command: supervisord -c /etc/supervisord.conf
+
   db:
     image: postgres:15
-    container_name: db  
+    container_name: db
     restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -27,45 +31,13 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     env_file:
       - .env
+
   redis:
     image: redis:7
     container_name: dashboard_redis
     ports:
       - "6379:6379"
     restart: always
-  celery:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: dashboard_celery
-    command: celery -A dashboard worker --loglevel=info -E
-    volumes:
-      - .:/app
-      - ./logs:/app/logs
-    working_dir: /app/src
-    depends_on:
-      - app
-      - redis
-    env_file:
-      - .env
-
-  celery-beat:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: dashboard_celery_beat
-    command: sh -c "celery -A dashboard beat --loglevel=info"
-    volumes:
-      - .:/app
-      - ./logs:/app/logs
-    working_dir: /app/src
-    environment:
-      - PYTHONPATH=/app/src
-    depends_on:
-      - app
-      - redis
-    env_file:
-      - .env
 
   flower:
     build:
@@ -83,6 +55,7 @@ services:
       - app
     env_file:
       - .env
+
   neo4j:
     image: neo4j:5.19
     container_name: neo4j_theband
@@ -90,11 +63,11 @@ services:
     environment:
       - NEO4J_AUTH=neo4j/${NEO4J_PASSWORD:-password123}
       - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
-      - NEO4J_initial_dbms_default_database=neo4j
+      - NEO4J_dbms_default__database=neo4j
       - NEO4J_dbms_security_procedures_unrestricted=apoc.*
     ports:
-      - "7474:7474"   # Interface web
-      - "7687:7687"   # Bolt (acesso por outras apps)
+      - "7474:7474"
+      - "7687:7687"
     volumes:
       - neo4j_data:/data
       - neo4j_logs:/logs
@@ -104,12 +77,9 @@ services:
       timeout: 5s
       retries: 5
 
-
-
 volumes:
   postgres_data:
   neo4j_data:
     driver: local
   neo4j_logs:
     driver: local
-  
