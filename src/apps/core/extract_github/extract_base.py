@@ -1,17 +1,19 @@
 import json
 import os
 from abc import ABC, abstractmethod
-from datetime import datetime
+from datetime import datetime, timezone
 from types import SimpleNamespace
 from typing import Any
 
 import airbyte as ab
 import pandas as pd
+import numpy as np
 from dotenv import load_dotenv
 from py2neo import Node, Relationship
 
 from .sink_neo4j import SinkNeo4j
 from .logging_config import LoggerFactory
+from airbyte.caches import PostgresCache
 
 logger = LoggerFactory.get_logger("extractor")
 
@@ -74,7 +76,6 @@ class ExtractBase(ABC):
             if self.config_node is not None:
                 config["start_date"] = self.config_node["last_retrieve_date"]
                 logger.info(f"Using start_date: {config['start_date']}")
-                pass
             
             try:
                 self.source = ab.get_source(
@@ -106,9 +107,17 @@ class ExtractBase(ABC):
         logger.info(f"Selecting streams to load: {self.streams}")
         self.source.select_streams(self.streams)  # Select streams to load
 
-        logger.info("Initializing DuckDB cache.")
-        self.cache = ab.get_default_cache()  # Initialize DuckDB cache
-
+        logger.info("Initializing Postgres Cache.")
+        self.cache = PostgresCache(
+            
+            host=os.getenv("DB_HOST_LOCAL", "localhost"),
+            port=os.getenv("DB_PORT_LOCAL", "localhost"),
+            username=os.getenv("DB_USER_LOCAL", "localhost"),
+            password=os.getenv("DB_PASSWORD_LOCAL", "localhost"),
+            database=os.getenv("DB_NAME_LOCAL", "localhost")
+            
+        )
+        
         logger.info("Reading data from Airbyte source into cache...")
         try:
             self.source.read(cache=self.cache)  # Read data into cache
@@ -116,6 +125,42 @@ class ExtractBase(ABC):
         except Exception as e:
             logger.error(f"Failed to load data from Airbyte source: {e}")
             raise
+
+    def flatten_nested_dict(self, d: dict, parent_key='', sep='.') -> dict:
+        items = []
+        for k, v in d.items():
+            new_key = f"{parent_key}{k}" if parent_key else k
+            if isinstance(v, dict):
+                items.extend(self.flatten_nested_dict(v, new_key + sep, sep=sep).items())
+            else:
+                items.append((new_key, v))
+        return dict(items)        
+
+    def data_clean (self, data: Any) -> Any:
+        clean = {}
+        for k, v in data.items():
+            if isinstance(v, dict):
+                flattened = self.flatten_nested_dict(v, parent_key=k)
+                for fk, fv in flattened.items():
+                    if isinstance(fv, (str, int, float, bool)) or fv is None:
+                        clean[fk] = fv
+                    else:
+                        clean[fk] = str(fv)
+            elif isinstance(v, (str, int, float, bool)) or v is None:
+                clean[k] = v
+            else:
+                clean[k] = str(v)
+        return clean
+
+
+    def safe_nan_to_none(self, v):
+        try:
+            if isinstance(v, (list, np.ndarray, pd.Series)):
+                return [None if pd.isna(item) else item for item in v]
+            return None if pd.isna(v) else v
+        except TypeError:
+            return v
+
 
     def transform(self, value: Any) -> Any:
         """Transform a record from Airbyte into a clean dictionary.
@@ -134,12 +179,17 @@ class ExtractBase(ABC):
         """
         logger.debug(f"Transforming record: {value}")
         data = {
-            k: (v if not pd.isna(v) else None)  # Replace NaN with None
+            k: self.safe_nan_to_none(v)
             for k, v in value._asdict().items()  # Convert to dict
             if not k.startswith("_airbyte")  # Remove metadata fields
         }
-        logger.debug(f"Transformed record: {data}")
-        return data
+
+        clean = self.data_clean(data)
+        logger.debug(f"Transformed record: {clean}")
+        
+        return clean
+
+
 
     def save_node(self, node: Node, type: str, key: str) -> Node:
         """Persist a node into Neo4j.
@@ -296,7 +346,7 @@ class ExtractBase(ABC):
         data["created_node_at"] = datetime.now().isoformat()
         node = Node(node_type, **data)
         try:
-            self.sink.save_node(node, node_type, id_field)
+            self.sink.save_node(node, node_type.strip().lower(), id_field)
             logger.info(
                 f"Node '{node_type}' - '{data.get(id_field)}' created and saved."
             )
@@ -310,7 +360,7 @@ class ExtractBase(ABC):
     def create_config_domain(self,name:str) -> None:
         """Load retrieve date."""
         logger.info("Creating retrieve date configuration node.")
-        today = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+        today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
         start_date = today.isoformat() + "Z"
         organization_id = os.getenv("ORGANIZATION_ID", "")
         organization_name = os.getenv("ORGANIZATION", "")

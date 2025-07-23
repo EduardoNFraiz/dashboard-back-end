@@ -1,6 +1,6 @@
 from .models import Application
 import logging
-from .services import retrieve_github_data
+from .services import retrive_data
 from django.db.models.signals import (
     pre_init,   post_init,
     pre_save,   post_save,
@@ -8,7 +8,6 @@ from django.db.models.signals import (
     m2m_changed
 )
 from django.dispatch import receiver
-from django.contrib.auth.models import Group
 
 
 logger = logging.getLogger(__name__)
@@ -29,7 +28,7 @@ def pre_save_application(sender, instance, raw, using, update_fields, **kwargs):
 @receiver(post_save, sender=Application)
 def post_save_application(sender, instance, created, raw, using, update_fields, **kwargs):
     logger.info(f"xxxx - {instance.secret} - {instance.repository}")
-    retrieve_github_data("xxx",instance.secret,instance.repository),
+    retrive_data("xxx",instance.secret,instance.repository),
     
 @receiver(pre_delete, sender=Application)
 def pre_delete_application(sender, instance, using, **kwargs):

@@ -2,7 +2,7 @@ import os  # noqa: I001
 from typing import Any  # noqa: I001
 from dotenv import load_dotenv  # noqa: I001
 from py2neo import Graph, Node, Relationship  # noqa: I001
-
+from datetime import datetime, timezone  #  noqa: I001
 
 class SinkNeo4j:
     """Handles connections and interactions with the Neo4j graph database.
@@ -40,6 +40,10 @@ class SinkNeo4j:
             id_element (str): key that identify a node
 
         """  # noqa: D401
+
+        today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+        # Remove timezone info para formatar como string ISO sem fuso
+        element['created_date'] = today.replace(tzinfo=None).strftime("%Y-%m-%dT%H:%M:%S") + 'Z'
         self.graph.merge(element, type_elment.strip().lower(), id_element)
 
     def save_relationship(self, element: Relationship) -> None:

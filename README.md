@@ -91,6 +91,19 @@ docker exec -it dashboard_the_band python manage.py test
 
 ---
 
+## Queries
+```sql
+
+MATCH (i:issue)-[:created_by]->(a:Person)
+OPTIONAL MATCH (i)-[:assigned_to]->(assignee:Person)
+RETURN 
+  a.login AS author, 
+  coalesce(assignee.login, a.login) AS assignee, 
+  count(*) AS total
+ORDER BY author, assignee, total DESC;
+
+```
+
 ## 📁 License
 
 This project is licensed under the [MIT License](LICENSE).
