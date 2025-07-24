@@ -1,0 +1,76 @@
+/usr/local/lib/python3.10/site-packages/polymorphic/__init__.py:9: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+SecurityWarning: You're running the worker with superuser privileges: this is
+absolutely not recommended!
+
+Please specify a different user using the --uid option.
+
+User information: uid=0 euid=0 gid=0 egid=0
+
+[2025-07-24 18:33:21,754: INFO/MainProcess] Connected to redis://redis:6379/0
+[2025-07-24 18:33:21,758: INFO/MainProcess] mingle: searching for neighbors
+[2025-07-24 18:33:22,768: INFO/MainProcess] mingle: all alone
+[2025-07-24 18:33:22,790: INFO/MainProcess] celery@31d592bad38a ready.
+[2025-07-24 18:33:22,795: ERROR/MainProcess] Received unregistered task of type 'apps.core.services.retrieve_github_data'.
+The message has been ignored and discarded.
+
+Did you remember to import the module containing this task?
+Or maybe you're using relative imports?
+
+Please see
+https://docs.celeryq.dev/en/latest/internals/protocol.html
+for more information.
+
+The full contents of the message body was:
+b'[["xxx", "xxxx", "xxxx"], {}, {"callbacks": null, "errbacks": null, "chain": null, "chord": null}]' (98b)
+
+The full contents of the message headers:
+{'lang': 'py', 'task': 'apps.core.services.retrieve_github_data', 'id': '225fa17e-8b0d-406e-afec-6c8e221e25ae', 'shadow': None, 'eta': None, 'expires': None, 'group': None, 'group_index': None, 'retries': 0, 'timelimit': [None, None], 'root_id': '225fa17e-8b0d-406e-afec-6c8e221e25ae', 'parent_id': None, 'argsrepr': "['xxx', 'xxxx', 'xxxx']", 'kwargsrepr': '{}', 'origin': 'gen74@31d592bad38a', 'ignore_result': False, 'replaced_task_nesting': 0, 'stamped_headers': None, 'stamps': {}, 'periodic_task_name': 'Retrieve GitHub Data Daily'}
+
+The delivery info for this task is:
+{'exchange': '', 'routing_key': 'celery'}
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/site-packages/celery/worker/consumer/consumer.py", line 662, in on_task_received
+    strategy = strategies[type_]
+KeyError: 'apps.core.services.retrieve_github_data'
+[2025-07-24 18:33:22,803: INFO/MainProcess] Task celery.backend_cleanup[5b4f9a44-f7af-457e-a2de-9eacdd36bf31] received
+[2025-07-24 18:33:22,811: INFO/ForkPoolWorker-15] Task celery.backend_cleanup[5b4f9a44-f7af-457e-a2de-9eacdd36bf31] succeeded in 0.005445171002065763s: None
+/usr/local/lib/python3.10/site-packages/polymorphic/__init__.py:9: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+SecurityWarning: You're running the worker with superuser privileges: this is
+absolutely not recommended!
+
+Please specify a different user using the --uid option.
+
+User information: uid=0 euid=0 gid=0 egid=0
+
+[2025-07-24 20:21:47,731: INFO/MainProcess] Connected to redis://redis:6379/0
+[2025-07-24 20:21:47,733: INFO/MainProcess] mingle: searching for neighbors
+[2025-07-24 20:21:48,739: INFO/MainProcess] mingle: all alone
+[2025-07-24 20:21:48,762: INFO/MainProcess] celery@a5519f3da18a ready.
+/usr/local/lib/python3.10/site-packages/polymorphic/__init__.py:9: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+SecurityWarning: You're running the worker with superuser privileges: this is
+absolutely not recommended!
+
+Please specify a different user using the --uid option.
+
+User information: uid=0 euid=0 gid=0 egid=0
+
+[2025-07-24 20:28:01,898: INFO/MainProcess] Connected to redis://redis:6379/0
+[2025-07-24 20:28:01,900: INFO/MainProcess] mingle: searching for neighbors
+[2025-07-24 20:28:02,906: INFO/MainProcess] mingle: all alone
+[2025-07-24 20:28:02,929: INFO/MainProcess] celery@9723c668f6a8 ready.
+/usr/local/lib/python3.10/site-packages/polymorphic/__init__.py:9: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+SecurityWarning: You're running the worker with superuser privileges: this is
+absolutely not recommended!
+
+Please specify a different user using the --uid option.
+
+User information: uid=0 euid=0 gid=0 egid=0
+
+[2025-07-24 20:40:00,363: INFO/MainProcess] Connected to redis://redis:6379/0
+[2025-07-24 20:40:00,365: INFO/MainProcess] mingle: searching for neighbors
+[2025-07-24 20:40:01,373: INFO/MainProcess] mingle: all alone
+[2025-07-24 20:40:01,394: INFO/MainProcess] celery@badc1dd58908 ready.

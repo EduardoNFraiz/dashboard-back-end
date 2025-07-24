@@ -15,6 +15,12 @@ from rest_framework import generics
 from rest_framework import filters
 import django_filters.rest_framework
 
+from rest_framework.viewsets import ViewSet
+from rest_framework.response import Response
+from rest_framework import status
+from django.http import JsonResponse
+from .repository.IssueRepository import IssueRepository
+
 
 class ApplicationViewSet(ModelViewSet):
     queryset = Application.objects.all()
@@ -35,3 +41,24 @@ class ApplicationViewSet(ModelViewSet):
         if self.request.method in ['GET']:
             return ApplicationReadSerializer
         return ApplicationWriteSerializer
+
+class IssueView(ViewSet):
+    def list(self, request):
+        try:
+            skip = int(request.query_params.get("skip", 0))
+            limit = int(request.query_params.get("limit", 10))
+        except ValueError:
+            return Response({"error": "Invalid pagination parameters."}, status=status.HTTP_400_BAD_REQUEST)
+
+        repo = IssueRepository()
+        try:
+            data = repo.get_all(skip=skip, limit=limit)
+            return Response({
+                "data": data,
+                "pagination": {
+                    "skip": skip,
+                    "limit": limit
+                }
+            })
+        finally:
+            repo.close()
