@@ -43,10 +43,14 @@ class ApplicationViewSet(ModelViewSet):
         return ApplicationWriteSerializer
 
 class IssueView(ViewSet):
+
+    authentication_classes = [OAuth2Authentication, SessionAuthentication]
+    permission_classes = [Or(IsAdminUser, TokenHasReadWriteScope)]
+   
     def list(self, request):
         try:
             skip = int(request.query_params.get("skip", 0))
-            limit = int(request.query_params.get("limit", 10))
+            limit = int(request.query_params.get("limit", 50))
         except ValueError:
             return Response({"error": "Invalid pagination parameters."}, status=status.HTTP_400_BAD_REQUEST)
 

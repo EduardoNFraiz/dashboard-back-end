@@ -42,3 +42,27 @@
 [2025-07-24 23:39:54 +0000] [76] [INFO] Using worker: sync
 [2025-07-24 23:39:54 +0000] [77] [INFO] Booting worker with pid: 77
 [2025-07-24 23:39:54 +0000] [78] [INFO] Booting worker with pid: 78
+/usr/local/lib/python3.10/site-packages/gunicorn/util.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+[2025-07-25 11:37:45 +0000] [76] [INFO] Starting gunicorn 20.1.0
+[2025-07-25 11:37:45 +0000] [76] [INFO] Listening at: http://0.0.0.0:8000 (76)
+[2025-07-25 11:37:45 +0000] [76] [INFO] Using worker: sync
+[2025-07-25 11:37:45 +0000] [77] [INFO] Booting worker with pid: 77
+[2025-07-25 11:37:45 +0000] [78] [INFO] Booting worker with pid: 78
+[2025-07-25 08:46:26 -0300] [77] [INFO] Worker reloading: /app/src/apps/core/repository/IssueRepository.py modified
+[2025-07-25 08:46:26 -0300] [77] [INFO] Worker exiting (pid: 77)
+[2025-07-25 11:46:26 +0000] [225] [INFO] Booting worker with pid: 225
+[2025-07-25 11:46:57 +0000] [76] [INFO] Handling signal: term
+[2025-07-25 08:46:57 -0300] [225] [INFO] Worker exiting (pid: 225)
+[2025-07-25 08:46:57 -0300] [78] [INFO] Worker exiting (pid: 78)
+[2025-07-25 11:46:58 +0000] [76] [INFO] Shutting down: Master
+/usr/local/lib/python3.10/site-packages/gunicorn/util.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+[2025-07-25 11:47:44 +0000] [76] [INFO] Starting gunicorn 20.1.0
+[2025-07-25 11:47:44 +0000] [76] [INFO] Listening at: http://0.0.0.0:8000 (76)
+[2025-07-25 11:47:44 +0000] [76] [INFO] Using worker: sync
+[2025-07-25 11:47:44 +0000] [77] [INFO] Booting worker with pid: 77
+[2025-07-25 11:47:44 +0000] [78] [INFO] Booting worker with pid: 78
+[2025-07-25 11:49:00 +0000] [76] [INFO] Handling signal: term
+[2025-07-25 08:49:00 -0300] [77] [INFO] Worker exiting (pid: 77)
+[2025-07-25 08:49:00 -0300] [78] [INFO] Worker exiting (pid: 78)

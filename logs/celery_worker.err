@@ -74,3 +74,31 @@ User information: uid=0 euid=0 gid=0 egid=0
 [2025-07-24 20:40:00,365: INFO/MainProcess] mingle: searching for neighbors
 [2025-07-24 20:40:01,373: INFO/MainProcess] mingle: all alone
 [2025-07-24 20:40:01,394: INFO/MainProcess] celery@badc1dd58908 ready.
+/usr/local/lib/python3.10/site-packages/polymorphic/__init__.py:9: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+SecurityWarning: You're running the worker with superuser privileges: this is
+absolutely not recommended!
+
+Please specify a different user using the --uid option.
+
+User information: uid=0 euid=0 gid=0 egid=0
+
+[2025-07-25 08:37:51,319: INFO/MainProcess] Connected to redis://redis:6379/0
+[2025-07-25 08:37:51,322: INFO/MainProcess] mingle: searching for neighbors
+[2025-07-25 08:37:52,330: INFO/MainProcess] mingle: all alone
+[2025-07-25 08:37:52,348: INFO/MainProcess] celery@806d8ca151fc ready.
+[2025-07-25 08:37:52,354: INFO/MainProcess] Task celery.backend_cleanup[c9bfa1f7-d8c9-448d-9f94-1b74534bd89b] received
+[2025-07-25 08:37:52,362: INFO/ForkPoolWorker-15] Task celery.backend_cleanup[c9bfa1f7-d8c9-448d-9f94-1b74534bd89b] succeeded in 0.005246604006970301s: None
+/usr/local/lib/python3.10/site-packages/polymorphic/__init__.py:9: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+SecurityWarning: You're running the worker with superuser privileges: this is
+absolutely not recommended!
+
+Please specify a different user using the --uid option.
+
+User information: uid=0 euid=0 gid=0 egid=0
+
+[2025-07-25 08:47:50,990: INFO/MainProcess] Connected to redis://redis:6379/0
+[2025-07-25 08:47:50,993: INFO/MainProcess] mingle: searching for neighbors
+[2025-07-25 08:47:51,999: INFO/MainProcess] mingle: all alone
+[2025-07-25 08:47:52,014: INFO/MainProcess] celery@ae672ae56e81 ready.
