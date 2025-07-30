@@ -56,7 +56,7 @@ class IssueView(ViewSet):
 
         repo = IssueRepository()
         try:
-            data = repo.get_all(skip=skip, limit=limit)
+            data = repo.get_all_issue_repositories(skip=skip, limit=limit)
             return Response({
                 "data": data,
                 "pagination": {

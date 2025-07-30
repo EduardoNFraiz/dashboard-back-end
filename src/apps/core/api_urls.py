@@ -8,7 +8,7 @@ router = routers.DefaultRouter()
 
 router.register(r'application', ApplicationViewSet, basename='application')
 
-router.register(r'issue', IssueView, basename='issue')  # Aqui é o novo endpoint
+router.register(r'issue/repository/stats', IssueView, basename='stats')
 
 urlpatterns = [
     path('core/', include(router.urls))

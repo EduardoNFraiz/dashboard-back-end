@@ -19,3 +19,13 @@
 /usr/local/lib/python3.10/site-packages/polymorphic/__init__.py:9: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
   import pkg_resources
 [2025-07-25 08:47:48,941: INFO/MainProcess] beat: Starting...
+/usr/local/lib/python3.10/site-packages/polymorphic/__init__.py:9: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+[2025-07-25 08:51:32,927: INFO/MainProcess] beat: Starting...
+/usr/local/lib/python3.10/site-packages/polymorphic/__init__.py:9: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+[2025-07-25 08:55:12,127: INFO/MainProcess] beat: Starting...
+[2025-07-25 18:33:18,268: INFO/MainProcess] Scheduler: Sending due task Retrieve GitHub Data Daily (apps.core.services.retrieve_github_data)
+/usr/local/lib/python3.10/site-packages/polymorphic/__init__.py:9: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+[2025-07-25 19:21:40,082: INFO/MainProcess] beat: Starting...

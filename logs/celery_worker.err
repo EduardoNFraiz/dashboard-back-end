@@ -102,3 +102,146 @@ User information: uid=0 euid=0 gid=0 egid=0
 [2025-07-25 08:47:50,993: INFO/MainProcess] mingle: searching for neighbors
 [2025-07-25 08:47:51,999: INFO/MainProcess] mingle: all alone
 [2025-07-25 08:47:52,014: INFO/MainProcess] celery@ae672ae56e81 ready.
+/usr/local/lib/python3.10/site-packages/polymorphic/__init__.py:9: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+SecurityWarning: You're running the worker with superuser privileges: this is
+absolutely not recommended!
+
+Please specify a different user using the --uid option.
+
+User information: uid=0 euid=0 gid=0 egid=0
+
+[2025-07-25 08:51:34,979: INFO/MainProcess] Connected to redis://redis:6379/0
+[2025-07-25 08:51:34,981: INFO/MainProcess] mingle: searching for neighbors
+[2025-07-25 08:51:35,987: INFO/MainProcess] mingle: all alone
+[2025-07-25 08:51:36,009: INFO/MainProcess] celery@62f01358f170 ready.
+/usr/local/lib/python3.10/site-packages/polymorphic/__init__.py:9: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+SecurityWarning: You're running the worker with superuser privileges: this is
+absolutely not recommended!
+
+Please specify a different user using the --uid option.
+
+User information: uid=0 euid=0 gid=0 egid=0
+
+[2025-07-25 08:55:14,373: INFO/MainProcess] Connected to redis://redis:6379/0
+[2025-07-25 08:55:14,376: INFO/MainProcess] mingle: searching for neighbors
+[2025-07-25 08:55:15,383: INFO/MainProcess] mingle: all alone
+[2025-07-25 08:55:15,400: INFO/MainProcess] celery@a663d5b8456f ready.
+[2025-07-25 18:33:18,301: ERROR/MainProcess] Received unregistered task of type 'apps.core.services.retrieve_github_data'.
+The message has been ignored and discarded.
+
+Did you remember to import the module containing this task?
+Or maybe you're using relative imports?
+
+Please see
+https://docs.celeryq.dev/en/latest/internals/protocol.html
+for more information.
+
+The full contents of the message body was:
+b'[["xxx", "xxxx", "xxxx"], {}, {"callbacks": null, "errbacks": null, "chain": null, "chord": null}]' (98b)
+
+The full contents of the message headers:
+{'lang': 'py', 'task': 'apps.core.services.retrieve_github_data', 'id': '1ffd16fe-59a3-4f45-bf0e-39b08a102847', 'shadow': None, 'eta': None, 'expires': None, 'group': None, 'group_index': None, 'retries': 0, 'timelimit': [None, None], 'root_id': '1ffd16fe-59a3-4f45-bf0e-39b08a102847', 'parent_id': None, 'argsrepr': "['xxx', 'xxxx', 'xxxx']", 'kwargsrepr': '{}', 'origin': 'gen74@a663d5b8456f', 'ignore_result': False, 'replaced_task_nesting': 0, 'stamped_headers': None, 'stamps': {}, 'periodic_task_name': 'Retrieve GitHub Data Daily'}
+
+The delivery info for this task is:
+{'exchange': '', 'routing_key': 'celery'}
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/site-packages/celery/worker/consumer/consumer.py", line 662, in on_task_received
+    strategy = strategies[type_]
+KeyError: 'apps.core.services.retrieve_github_data'
+[2025-07-25 18:47:18,289: WARNING/MainProcess] consumer: Connection to broker lost. Trying to re-establish the connection...
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/site-packages/redis/retry.py", line 87, in call_with_retry
+    return do()
+  File "/usr/local/lib/python3.10/site-packages/redis/client.py", line 919, in <lambda>
+    lambda: command(*args, **kwargs),
+  File "/usr/local/lib/python3.10/site-packages/redis/client.py", line 940, in try_read
+    return conn.read_response(disconnect_on_error=False, push_request=True)
+  File "/usr/local/lib/python3.10/site-packages/redis/connection.py", line 644, in read_response
+    response = self._parser.read_response(disable_decoding=disable_decoding)
+  File "/usr/local/lib/python3.10/site-packages/redis/_parsers/resp2.py", line 15, in read_response
+    result = self._read_response(disable_decoding=disable_decoding)
+  File "/usr/local/lib/python3.10/site-packages/redis/_parsers/resp2.py", line 25, in _read_response
+    raw = self._buffer.readline()
+  File "/usr/local/lib/python3.10/site-packages/redis/_parsers/socket.py", line 115, in readline
+    self._read_from_socket()
+  File "/usr/local/lib/python3.10/site-packages/redis/_parsers/socket.py", line 68, in _read_from_socket
+    raise ConnectionError(SERVER_CLOSED_CONNECTION_ERROR)
+redis.exceptions.ConnectionError: Connection closed by server.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/site-packages/redis/connection.py", line 385, in connect_check_health
+    sock = self.retry.call_with_retry(
+  File "/usr/local/lib/python3.10/site-packages/redis/retry.py", line 87, in call_with_retry
+    return do()
+  File "/usr/local/lib/python3.10/site-packages/redis/connection.py", line 386, in <lambda>
+    lambda: self._connect(), lambda error: self.disconnect(error)
+  File "/usr/local/lib/python3.10/site-packages/redis/connection.py", line 797, in _connect
+    raise err
+  File "/usr/local/lib/python3.10/site-packages/redis/connection.py", line 781, in _connect
+    sock.connect(socket_address)
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/site-packages/celery/worker/consumer/consumer.py", line 341, in start
+    blueprint.start(self)
+  File "/usr/local/lib/python3.10/site-packages/celery/bootsteps.py", line 116, in start
+    step.start(parent)
+  File "/usr/local/lib/python3.10/site-packages/celery/worker/consumer/consumer.py", line 772, in start
+    c.loop(*c.loop_args())
+  File "/usr/local/lib/python3.10/site-packages/celery/worker/loops.py", line 97, in asynloop
+    next(loop)
+  File "/usr/local/lib/python3.10/site-packages/kombu/asynchronous/hub.py", line 373, in create_loop
+    cb(*cbargs)
+  File "/usr/local/lib/python3.10/site-packages/kombu/transport/redis.py", line 1359, in on_readable
+    self.cycle.on_readable(fileno)
+  File "/usr/local/lib/python3.10/site-packages/kombu/transport/redis.py", line 576, in on_readable
+    chan.handlers[type]()
+  File "/usr/local/lib/python3.10/site-packages/kombu/transport/redis.py", line 925, in _receive
+    ret.append(self._receive_one(c))
+  File "/usr/local/lib/python3.10/site-packages/kombu/transport/redis.py", line 935, in _receive_one
+    response = c.parse_response()
+  File "/usr/local/lib/python3.10/site-packages/redis/client.py", line 942, in parse_response
+    response = self._execute(conn, try_read)
+  File "/usr/local/lib/python3.10/site-packages/redis/client.py", line 918, in _execute
+    return conn.retry.call_with_retry(
+  File "/usr/local/lib/python3.10/site-packages/redis/retry.py", line 90, in call_with_retry
+    fail(error)
+  File "/usr/local/lib/python3.10/site-packages/redis/client.py", line 920, in <lambda>
+    lambda _: self._reconnect(conn),
+  File "/usr/local/lib/python3.10/site-packages/redis/client.py", line 908, in _reconnect
+    conn.connect()
+  File "/usr/local/lib/python3.10/site-packages/redis/connection.py", line 379, in connect
+    self.connect_check_health(check_health=True)
+  File "/usr/local/lib/python3.10/site-packages/redis/connection.py", line 391, in connect_check_health
+    raise ConnectionError(self._error_message(e))
+redis.exceptions.ConnectionError: Error 111 connecting to redis:6379. Connection refused.
+[2025-07-25 18:47:18,310: WARNING/MainProcess] CPendingDeprecationWarning: 
+In Celery 5.1 we introduced an optional breaking change which
+on connection loss cancels all currently executed tasks with late acknowledgement enabled.
+These tasks cannot be acknowledged as the connection is gone, and the tasks are automatically redelivered
+back to the queue. You can enable this behavior using the worker_cancel_long_running_tasks_on_connection_loss
+setting. In Celery 5.1 it is set to False by default. The setting will be set to True by default in Celery 6.0.
+
+
+[2025-07-25 18:47:18,363: ERROR/MainProcess] consumer: Cannot connect to redis://redis:6379/0: Error 111 connecting to redis:6379. Connection refused..
+Trying again in 2.00 seconds... (1/100)
+
+/usr/local/lib/python3.10/site-packages/polymorphic/__init__.py:9: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+SecurityWarning: You're running the worker with superuser privileges: this is
+absolutely not recommended!
+
+Please specify a different user using the --uid option.
+
+User information: uid=0 euid=0 gid=0 egid=0
+
+[2025-07-25 19:21:41,934: INFO/MainProcess] Connected to redis://redis:6379/0
+[2025-07-25 19:21:41,936: INFO/MainProcess] mingle: searching for neighbors
+[2025-07-25 19:21:42,943: INFO/MainProcess] mingle: all alone
+[2025-07-25 19:21:42,969: INFO/MainProcess] celery@a663d5b8456f ready.

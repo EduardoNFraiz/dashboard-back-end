@@ -66,3 +66,61 @@
 [2025-07-25 11:49:00 +0000] [76] [INFO] Handling signal: term
 [2025-07-25 08:49:00 -0300] [77] [INFO] Worker exiting (pid: 77)
 [2025-07-25 08:49:00 -0300] [78] [INFO] Worker exiting (pid: 78)
+/usr/local/lib/python3.10/site-packages/gunicorn/util.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+[2025-07-25 11:51:28 +0000] [76] [INFO] Starting gunicorn 20.1.0
+[2025-07-25 11:51:28 +0000] [76] [INFO] Listening at: http://0.0.0.0:8000 (76)
+[2025-07-25 11:51:28 +0000] [76] [INFO] Using worker: sync
+[2025-07-25 11:51:28 +0000] [77] [INFO] Booting worker with pid: 77
+[2025-07-25 11:51:28 +0000] [78] [INFO] Booting worker with pid: 78
+[2025-07-25 08:52:23 -0300] [77] [INFO] Worker reloading: /app/src/apps/core/api_urls.py modified
+[2025-07-25 08:52:23 -0300] [77] [INFO] Worker exiting (pid: 77)
+[2025-07-25 08:52:23 -0300] [78] [INFO] Worker reloading: /app/src/apps/core/api_urls.py modified
+[2025-07-25 08:52:23 -0300] [78] [INFO] Worker exiting (pid: 78)
+[2025-07-25 11:52:24 +0000] [225] [INFO] Booting worker with pid: 225
+[2025-07-25 11:52:24 +0000] [226] [INFO] Booting worker with pid: 226
+[2025-07-25 08:54:49 -0300] [225] [INFO] Worker reloading: /app/src/apps/core/api_urls.py modified
+[2025-07-25 08:54:49 -0300] [225] [INFO] Worker exiting (pid: 225)
+[2025-07-25 11:54:50 +0000] [293] [INFO] Booting worker with pid: 293
+[2025-07-25 08:54:50 -0300] [226] [INFO] Worker reloading: /app/src/apps/core/api_urls.py modified
+[2025-07-25 08:54:50 -0300] [226] [INFO] Worker exiting (pid: 226)
+[2025-07-25 11:54:50 +0000] [310] [INFO] Booting worker with pid: 310
+/usr/local/lib/python3.10/site-packages/gunicorn/util.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+[2025-07-25 11:55:07 +0000] [76] [INFO] Starting gunicorn 20.1.0
+[2025-07-25 11:55:07 +0000] [76] [INFO] Listening at: http://0.0.0.0:8000 (76)
+[2025-07-25 11:55:07 +0000] [76] [INFO] Using worker: sync
+[2025-07-25 11:55:07 +0000] [77] [INFO] Booting worker with pid: 77
+[2025-07-25 11:55:07 +0000] [78] [INFO] Booting worker with pid: 78
+[2025-07-25 08:55:23 -0300] [77] [INFO] Worker reloading: /app/src/apps/core/api_urls.py modified
+[2025-07-25 08:55:23 -0300] [77] [INFO] Worker exiting (pid: 77)
+[2025-07-25 11:55:23 +0000] [225] [INFO] Booting worker with pid: 225
+[2025-07-25 08:55:38 -0300] [225] [INFO] Worker reloading: /app/src/apps/core/api_urls.py modified
+[2025-07-25 08:55:38 -0300] [225] [INFO] Worker exiting (pid: 225)
+[2025-07-25 08:55:38 -0300] [78] [INFO] Worker reloading: /app/src/apps/core/api_urls.py modified
+[2025-07-25 08:55:38 -0300] [78] [INFO] Worker exiting (pid: 78)
+[2025-07-25 11:55:38 +0000] [259] [INFO] Booting worker with pid: 259
+[2025-07-25 11:55:39 +0000] [260] [INFO] Booting worker with pid: 260
+[2025-07-25 08:56:36 -0300] [259] [INFO] Worker reloading: /app/src/apps/core/api_views.py modified
+[2025-07-25 08:56:36 -0300] [259] [INFO] Worker exiting (pid: 259)
+[2025-07-25 08:56:36 -0300] [260] [INFO] Worker reloading: /app/src/apps/core/api_views.py modified
+[2025-07-25 08:56:36 -0300] [260] [INFO] Worker exiting (pid: 260)
+[2025-07-25 11:56:36 +0000] [327] [INFO] Booting worker with pid: 327
+[2025-07-25 11:56:37 +0000] [328] [INFO] Booting worker with pid: 328
+[2025-07-25 21:25:16 +0000] [76] [CRITICAL] WORKER TIMEOUT (pid:327)
+[2025-07-25 21:25:16 +0000] [76] [CRITICAL] WORKER TIMEOUT (pid:328)
+[2025-07-25 18:25:16 -0300] [327] [INFO] Worker exiting (pid: 327)
+[2025-07-25 18:25:16 -0300] [328] [INFO] Worker exiting (pid: 328)
+[2025-07-25 21:25:17 +0000] [395] [INFO] Booting worker with pid: 395
+[2025-07-25 21:25:17 +0000] [396] [INFO] Booting worker with pid: 396
+[2025-07-25 21:47:18 +0000] [76] [INFO] Handling signal: term
+[2025-07-25 18:47:18 -0300] [395] [INFO] Worker exiting (pid: 395)
+[2025-07-25 18:47:18 -0300] [396] [INFO] Worker exiting (pid: 396)
+[2025-07-25 21:47:20 +0000] [76] [INFO] Shutting down: Master
+/usr/local/lib/python3.10/site-packages/gunicorn/util.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+[2025-07-25 22:21:36 +0000] [76] [INFO] Starting gunicorn 20.1.0
+[2025-07-25 22:21:36 +0000] [76] [INFO] Listening at: http://0.0.0.0:8000 (76)
+[2025-07-25 22:21:36 +0000] [76] [INFO] Using worker: sync
+[2025-07-25 22:21:36 +0000] [77] [INFO] Booting worker with pid: 77
+[2025-07-25 22:21:36 +0000] [78] [INFO] Booting worker with pid: 78

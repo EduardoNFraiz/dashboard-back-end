@@ -3,7 +3,7 @@ from .base import Neo4jRepository
 class IssueRepository(Neo4jRepository):
     
 
-    def get_all(self, skip: int = 0, limit: int = 10):
+    def get_all_issue_repositories(self, skip: int = 0, limit: int = 10):
       query = """
       MATCH (r:Repository)-[:has]->(i:Issue)
       WITH r.name AS repo_name, i.state AS state, count(i) AS total_issues_by_state
