@@ -13,6 +13,12 @@ class Neo4jRepository(ABC):
             auth=(os.getenv("NEO4J_USERNAME", ""), os.getenv("NEO4J_PASSWORD", ""))
         )
 
+    def execute(self, query, skip, limit):
+        with self.driver.session() as session:
+          result = session.run(query, skip=skip, limit=limit)
+          raw_data = [record.data() for record in result]
+          return raw_data
+        
     def close(self):
         self.driver.close()
 
