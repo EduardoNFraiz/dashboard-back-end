@@ -3,6 +3,30 @@ from .base import Neo4jRepository
 
 
 class OrganizationRepository(Neo4jRepository):
+    
+    STATS_ISSUES_STATUS_ORGANIZATION = """
+MATCH (:Organization)-[:has]->(:Repository)-[:has]->(:Milestone)-[:has]->(i:Issue)
+WHERE i.state IS NOT NULL
+
+WITH
+  COUNT(CASE WHEN i.state = "open" THEN 1 END) AS opened_issues,
+  COUNT(CASE WHEN i.state = "closed" THEN 1 END) AS closed_issues
+WITH
+  opened_issues,
+  closed_issues,
+  (opened_issues + closed_issues) AS total_issues,
+  CASE
+    WHEN (opened_issues + closed_issues) > 0 THEN
+      ROUND(toFloat(closed_issues) / (opened_issues + closed_issues) * 100, 2)
+    ELSE 0
+  END AS completion_percentage
+RETURN
+  opened_issues AS `Abertas`,
+  closed_issues AS `Fechadas`,
+  total_issues AS `Total`,
+  completion_percentage AS ` %`
+
+    """
 
     COUNT_ISSUES_BY_REPOSITORY_ORGANIZATION = """
         MATCH (o:Organization)-[:has]->(r:Repository)-[:has]->(i:Issue)
