@@ -2,7 +2,7 @@ from .base import Neo4jRepository
 
 
 
-class IssueRepository(Neo4jRepository):
+class MilestoneRepository(Neo4jRepository):
 
     ALL_ISSUES_FROM_MILETONE  = """
         MATCH (r:Repository)-[:has]->(m:Milestone)-[:has]->(i:Issue)
@@ -27,72 +27,7 @@ class IssueRepository(Neo4jRepository):
         ORDER BY r.name, m.title
     """
 
-    ALL_ISSUE_REPOSITORY="""
-      MATCH (r:Repository)-[:has]->(i:Issue)
-      WITH r.name AS repo_name, i.state AS state, count(i) AS total_issues_by_state
-
-      CALL {
-        MATCH (r2:Repository)-[:has]->(i2:Issue)
-        WITH r2.name AS repo_name_inner, count(i2) AS total_issues_repo
-        RETURN repo_name_inner, total_issues_repo
-      }
-
-      WITH repo_name, state, total_issues_by_state, repo_name_inner, total_issues_repo
-      WHERE repo_name = repo_name_inner
-      RETURN 
-        repo_name AS repository,
-        state,
-        total_issues_by_state,
-        total_issues_repo,
-        round(toFloat(total_issues_by_state) / total_issues_repo * 100, 2) AS percentage
-      ORDER BY repository, percentage DESC
-      SKIP $skip
-      LIMIT $limit
-      """
-
-    COUNT_ISSUES_BY_REPOSITORY_ORGANIZATION = """
-        MATCH (o:Organization)-[:has]->(r:Repository)-[:has]->(i:Issue)
-        RETURN 
-        o.name AS organization,
-        r.name AS repository,
-        COUNT(CASE WHEN i.state = "open" THEN 1 END) AS open_issues,
-        COUNT(CASE WHEN i.state = "closed" THEN 1 END) AS closed_issues,
-        COUNT(i) AS total_issues
-        ORDER BY r.name
-    """
-
-    STATS_ISSUES_ORGANIZATION_REPOSITORY = """
-        MATCH (:Organization)-[:has]->(r:Repository)-[:has]->(i:Issue)
-        WHERE i.created_at IS NOT NULL
-        WITH 
-        r.name AS repository,
-        datetime(REPLACE(i.created_at, " ", "T")) AS created_dt,
-        // Calcula o início da quinzena
-        date.truncate('week', datetime(REPLACE(i.created_at, " ", "T"))) + 
-            duration({days: (datetime(REPLACE(i.created_at, " ", "T")).day - 1) / 14 * 14}) AS fortnight_start,
-        i.state AS state
-        WITH 
-        repository,
-        fortnight_start,
-        fortnight_start + duration({days: 13}) AS fortnight_end,
-        COUNT(*) AS total_issues,
-        COUNT(CASE WHEN state = "closed" THEN 1 END) AS closed_issues,
-        COUNT(CASE WHEN state = "open" THEN 1 END) AS open_issues
-        RETURN 
-        repository,
-        fortnight_start,
-        fortnight_end,
-        total_issues,
-        open_issues,
-        closed_issues,
-        CASE 
-            WHEN total_issues > 0 THEN ROUND(toFloat(closed_issues) / total_issues * 100, 2)
-            ELSE 0
-        END AS completion_percentage
-        ORDER BY repository, fortnight_start
-    """
-
-    STATS_REPOSITORY_MILESTONE = """
+    STATS_REPOSITORY_BY_MILESTONE = """
         MATCH (:Organization)-[:has]->(r:Repository)-[:has]->(m:Milestone)-[:has]->(i:Issue)
         WHERE i.state IS NOT NULL AND m.due_on IS NOT NULL
         WITH 
