@@ -127,6 +127,47 @@ class IssueRepository(Neo4jRepository):
 
     """
 
+
+    ### procurando issues com problemas no mapeamento
+    """
+// Contar issues sem milestone
+CALL {
+  MATCH (i:Issue)
+  WHERE NOT ( (:Milestone)-[:has]->(i) )
+  RETURN COUNT(i) AS issues_without_milestone
+}
+
+// Contar issues com milestone, mas sem repository
+CALL {
+  MATCH (i:Issue)<-[:has]-(m:Milestone)
+  WHERE NOT ( (:Repository)-[:has]->(m) )
+  RETURN COUNT(i) AS issues_without_repository
+}
+
+// Contar issues com milestone e repo, mas sem organização
+CALL {
+  MATCH (i:Issue)<-[:has]-(m:Milestone)<-[:has]-(r:Repository)
+  WHERE NOT ( (:Organization)-[:has]->(r) )
+  RETURN COUNT(i) AS issues_without_organization
+}
+
+// Contar issues totalmente órfãs (não participam do caminho completo)
+CALL {
+  MATCH (i:Issue)
+  WHERE NOT (
+    (:Organization)-[:has]->(:Repository)-[:has]->(:Milestone)-[:has]->(i)
+  )
+  RETURN COUNT(i) AS total_orphan_issues
+}
+
+// Combina os resultados em um único retorno
+RETURN 
+  issues_without_milestone,
+  issues_without_repository,
+  issues_without_organization,
+  total_orphan_issues
+
+ """
     
     def get_all_issue_repositories(self, skip: int = 0, limit: int = 10):
       
