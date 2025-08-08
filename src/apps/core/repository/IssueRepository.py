@@ -160,14 +160,27 @@ CALL {
   RETURN COUNT(i) AS total_orphan_issues
 }
 
-// Combina os resultados em um único retorno
+// Contar issues corretamente ligadas a um milestone
+CALL {
+  MATCH (i:Issue)<-[:has]-(:Milestone)
+  RETURN COUNT(i) AS issues_with_milestone
+}
+
+// Contar total de issues no grafo
+CALL {
+  MATCH (i:Issue)
+  RETURN COUNT(i) AS total_issues
+}
+
+// Retorna todos os dados de auditoria
 RETURN 
+  total_issues,
+  issues_with_milestone,
   issues_without_milestone,
   issues_without_repository,
   issues_without_organization,
   total_orphan_issues
-
- """
+"""
     
     def get_all_issue_repositories(self, skip: int = 0, limit: int = 10):
       

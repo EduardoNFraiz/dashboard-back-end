@@ -416,3 +416,25 @@ User information: uid=0 euid=0 gid=0 egid=0
 [2025-08-07 14:10:24,887: INFO/MainProcess] mingle: searching for neighbors
 [2025-08-07 14:10:25,892: INFO/MainProcess] mingle: all alone
 [2025-08-07 14:10:25,900: INFO/MainProcess] celery@a663d5b8456f ready.
+[2025-08-07 22:44:33,748: ERROR/MainProcess] Received unregistered task of type 'apps.core.services.retrieve_github_data'.
+The message has been ignored and discarded.
+
+Did you remember to import the module containing this task?
+Or maybe you're using relative imports?
+
+Please see
+https://docs.celeryq.dev/en/latest/internals/protocol.html
+for more information.
+
+The full contents of the message body was:
+b'[["xxx", "xxxx", "xxxx"], {}, {"callbacks": null, "errbacks": null, "chain": null, "chord": null}]' (98b)
+
+The full contents of the message headers:
+{'lang': 'py', 'task': 'apps.core.services.retrieve_github_data', 'id': '7864f515-d1cd-44c7-bcc2-98efbbf9cf03', 'shadow': None, 'eta': None, 'expires': None, 'group': None, 'group_index': None, 'retries': 0, 'timelimit': [None, None], 'root_id': '7864f515-d1cd-44c7-bcc2-98efbbf9cf03', 'parent_id': None, 'argsrepr': "['xxx', 'xxxx', 'xxxx']", 'kwargsrepr': '{}', 'origin': 'gen74@a663d5b8456f', 'ignore_result': False, 'replaced_task_nesting': 0, 'stamped_headers': None, 'stamps': {}, 'periodic_task_name': 'Retrieve GitHub Data Daily'}
+
+The delivery info for this task is:
+{'exchange': '', 'routing_key': 'celery'}
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/site-packages/celery/worker/consumer/consumer.py", line 662, in on_task_received
+    strategy = strategies[type_]
+KeyError: 'apps.core.services.retrieve_github_data'

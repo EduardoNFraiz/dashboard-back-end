@@ -105,3 +105,4 @@ django.db.utils.OperationalError: could not translate host name "db" to address:
 /usr/local/lib/python3.10/site-packages/polymorphic/__init__.py:9: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
   import pkg_resources
 [2025-08-07 14:10:22,974: INFO/MainProcess] beat: Starting...
+[2025-08-07 22:44:33,729: INFO/MainProcess] Scheduler: Sending due task Retrieve GitHub Data Daily (apps.core.services.retrieve_github_data)

@@ -157,3 +157,17 @@
 [2025-08-07 17:10:19 +0000] [76] [INFO] Using worker: sync
 [2025-08-07 17:10:19 +0000] [77] [INFO] Booting worker with pid: 77
 [2025-08-07 17:10:19 +0000] [78] [INFO] Booting worker with pid: 78
+[2025-08-08 01:44:33 +0000] [76] [CRITICAL] WORKER TIMEOUT (pid:77)
+[2025-08-08 01:44:33 +0000] [76] [CRITICAL] WORKER TIMEOUT (pid:78)
+[2025-08-07 22:44:33 -0300] [77] [INFO] Worker exiting (pid: 77)
+[2025-08-07 22:44:33 -0300] [78] [INFO] Worker exiting (pid: 78)
+[2025-08-08 01:44:34 +0000] [225] [INFO] Booting worker with pid: 225
+[2025-08-08 01:44:34 +0000] [226] [INFO] Booting worker with pid: 226
+[2025-08-08 11:05:59 +0000] [76] [CRITICAL] WORKER TIMEOUT (pid:225)
+[2025-08-08 11:05:59 +0000] [76] [CRITICAL] WORKER TIMEOUT (pid:226)
+[2025-08-08 08:05:59 -0300] [225] [INFO] Worker exiting (pid: 225)
+[2025-08-08 08:05:59 -0300] [226] [INFO] Worker exiting (pid: 226)
+[2025-08-08 11:06:01 +0000] [76] [WARNING] Worker with pid 225 was terminated due to signal 9
+[2025-08-08 11:06:01 +0000] [76] [WARNING] Worker with pid 226 was terminated due to signal 9
+[2025-08-08 11:06:01 +0000] [293] [INFO] Booting worker with pid: 293
+[2025-08-08 11:06:01 +0000] [294] [INFO] Booting worker with pid: 294
