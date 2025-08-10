@@ -29,6 +29,9 @@ class Configuration(models.Model):
     application_configuration = models.ForeignKey(Application, blank=True, null=True, on_delete=models.CASCADE, related_name="application_%(class)s")
     
 
+    def __str__(self):
+        return f"{self.organization_configuration}-{self.application_configuration}-{self.secret}-{self.repository}"
+
     class Meta:
         db_table = 'configuration'
 

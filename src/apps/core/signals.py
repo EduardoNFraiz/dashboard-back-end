@@ -16,10 +16,17 @@ logger = logging.getLogger(__name__)
 @receiver(post_save, sender=Configuration)
 def post_save_configuration(sender, instance, created, raw, using, update_fields, **kwargs):
     logger.info(f"Signal::Configuration - {instance}")
-    #retrive_data("xxx",instance.secret,instance.repository),
+    
+    application = instance.application_configuration.name
+    organization = instance.organization_configuration.name
+    secret = instance.secret
+    repository = instance.respository
+    user = instance.user
+
+    retrive_data(application=application, organization=organization, secret=secret, user=user,repository=repository),
 
 @receiver(post_save, sender=Organization)
 def post_save_configuration(sender, instance, created, raw, using, update_fields, **kwargs):
     logger.info(f"Signal::Organization - {instance}")
-    #retrive_data("xxx",instance.secret,instance.repository),
+    
     

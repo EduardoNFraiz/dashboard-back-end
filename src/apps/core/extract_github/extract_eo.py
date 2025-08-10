@@ -14,11 +14,12 @@ class ExtractEO(ExtractBase):
     users: Any = None
     organization_node: Any = None
 
-    def __init__(self) -> None:
+    def __init__(self, organization:str, secret:str, repository:str) -> None:
         """Post-initialization hook."""
+        super().__init__(organization=organization, secret=secret, repository=repository)
         self.logger = LoggerFactory.get_logger(__name__)
         self.streams = ["projects_v2", "teams", "team_members"]
-        super().__init__()
+        
 
     def fetch_data(self) -> None:
         """Load data from the Airbyte cache into pandas DataFrames."""  # noqa: D401

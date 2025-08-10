@@ -15,8 +15,9 @@ class ExtractCIRO(ExtractBase):
     issue_labels: Any = None
     projects: Any = None
 
-    def __init__(self) -> None:
+    def __init__(self, organization:str, secret:str, repository:str) -> None:
         """Initialize the extractor and define streams to load from Airbyte."""
+        super().__init__(organization=organization, secret=secret, repository=repository)
         self.logger = LoggerFactory.get_logger(__name__)
         self.streams = [
             "issue_milestones",

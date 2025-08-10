@@ -16,8 +16,8 @@ def retrieve_github_data(organization, secret, repository):
     
     chain(
         retrieve_github_eo_data.si(organization,secret,repository),
-        retrieve_github_cmpo_data.si(organization,secret,repository),
-        retrieve_github_ciro_data.si(organization,secret,repository),
+        #retrieve_github_cmpo_data.si(organization,secret,repository),
+        #retrieve_github_ciro_data.si(organization,secret,repository),
     )()
 
 

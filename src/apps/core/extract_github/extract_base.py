@@ -31,11 +31,19 @@ class ExtractBase(ABC):
     source: Any = None  # Data source connector (Airbyte)
     sink: Any = None  # Data sink, in this case Neo4j (via SinkNeo4j)
 
-    def __init__(self) -> None:
+    organization:str = None #Organization
+    secret:str = None #secret
+    repository:str = None #epository
+
+    def __init__(self, organization:str, secret:str, repository:str ) -> None:
         """Post-initialization hook."""
         logger.info("Initializing ExtractBase...")
         load_dotenv()
         logger.debug("Environment variables loaded.")
+        
+        self.organization = organization
+        self.secret = secret
+        self.repository = repository
 
         # Initialize the Neo4j sink
         try:
@@ -46,7 +54,7 @@ class ExtractBase(ABC):
             raise
 
         # Load GitHub token from .env
-        self.token = os.getenv("GITHUB_TOKEN", "")
+        self.token = self.secret
         if not self.token:
             logger.warning("GITHUB_TOKEN not found in environment variables.")
         else:
@@ -55,7 +63,7 @@ class ExtractBase(ABC):
         # If streams are configured, set up the Airbyte source
         if self.streams:
             logger.info(f"Configuring Airbyte source for streams: {self.streams}")
-            repositories = os.getenv("REPOSITORIES", "")
+            repositories = self.repository
             if not repositories:
                 logger.warning("REPOSITORIES environment variable is not set.")
 
@@ -67,7 +75,7 @@ class ExtractBase(ABC):
             }
             logger.debug(f"Airbyte source initial config: {config}")
 
-            organization_id = os.getenv("ORGANIZATION_ID", "")
+            organization_id = self.organization
             if not organization_id:
                 logger.warning("ORGANIZATION_ID environment variable is not set.")
 
@@ -362,8 +370,8 @@ class ExtractBase(ABC):
         logger.info("Creating retrieve date configuration node.")
         today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
         start_date = today.isoformat() + "Z"
-        organization_id = os.getenv("ORGANIZATION_ID", "")
-        organization_name = os.getenv("ORGANIZATION", "")
+        organization_id = self.organization
+        organization_name = self.organization
 
         if not organization_id:
             logger.warning("ORGANIZATION_ID not found for creating retrieve config.")
@@ -389,8 +397,8 @@ class ExtractBase(ABC):
 
     def __load_organization(self) -> None:
         """Load the organization node."""
-        organization_id = os.getenv("ORGANIZATION_ID", "")
-        organization_name = os.getenv("ORGANIZATION", "")
+        organization_id = self.organization
+        organization_name = self.organization
 
         if not organization_id:
             logger.warning("ORGANIZATION_ID not found for loading organization node.")

@@ -9,14 +9,14 @@ from py2neo import Graph  # noqa: I001
 class ExtractCMPOSoftwareArtifact(ExtractBase):
     """Extractor for CMPO Software Artifact."""
 
-    def __init__(self) -> None:
-        """Initialize the Neo4j connection and GitHub client."""
-        super().__init__()
+    def __init__(self, organization:str, secret:str, repository:str) -> None:
+        """Initialize the extractor and define streams to load from Airbyte."""
+        super().__init__(organization=organization, secret=secret, repository=repository)            
         self.graph = Graph(
             "bolt://neo4j:7687",
             auth=(os.getenv("NEO4J_USERNAME", ""), os.getenv("NEO4J_PASSWORD", "")),
         )
-        self.token = os.getenv("GITHUB_TOKEN", "")
+        self.token = secret
         self.github = Github(self.token)
         self.commits = self._load_commits()
 
