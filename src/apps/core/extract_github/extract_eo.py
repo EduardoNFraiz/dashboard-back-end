@@ -62,10 +62,12 @@ class ExtractEO(ExtractBase):
 
                 team_member_node = self.create_node(data, "TeamMember", "id")
                 team_node = self.sink.get_node("Team", slug=member.team_slug)
-
+               
                 self.create_relationship(team_member_node, "done_for", team_node)
-                self.create_relationship(team_node, "has", team_member_node)
-                self.create_relationship(team_member_node, "is", person_node)
+                self.create_relationship(team_node, "composed_of", team_member_node)
+                self.create_relationship(team_member_node, "allocates", person_node)
+                self.create_relationship(person_node, "allocated", team_member_node)
+                
 
     def __load_team(self) -> None:
         """Create Team nodes and links them to the organization."""

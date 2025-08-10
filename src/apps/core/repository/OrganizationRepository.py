@@ -21,10 +21,10 @@ class OrganizationRepository(Neo4jRepository):
           ELSE 0
         END AS completion_percentage
       RETURN
-        opened_issues AS `Abertas`,
-        closed_issues AS `Fechadas`,
+        opened_issues AS `Open`,
+        closed_issues AS `Close`,
         total_issues AS `Total`,
-        completion_percentage AS `% de conclusao`
+        completion_percentage AS `% Done`
     """
 
     TATS_ISSUES_STATUS_ORGANIZATION = """
@@ -44,10 +44,10 @@ class OrganizationRepository(Neo4jRepository):
           ELSE 0
         END AS completion_percentage
       RETURN
-        opened_issues AS `Abertas`,
-        closed_issues AS `Fechadas`,
+        opened_issues AS `Open`,
+        closed_issues AS `Close`,
         total_issues AS `Total`,
-        completion_percentage AS `% de conclusao`
+        completion_percentage AS `% Done`
     """
 
     COUNT_ISSUES_BY_REPOSITORY_ORGANIZATION = """

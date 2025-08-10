@@ -438,3 +438,40 @@ Traceback (most recent call last):
   File "/usr/local/lib/python3.10/site-packages/celery/worker/consumer/consumer.py", line 662, in on_task_received
     strategy = strategies[type_]
 KeyError: 'apps.core.services.retrieve_github_data'
+/usr/local/lib/python3.10/site-packages/polymorphic/__init__.py:9: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+SecurityWarning: You're running the worker with superuser privileges: this is
+absolutely not recommended!
+
+Please specify a different user using the --uid option.
+
+User information: uid=0 euid=0 gid=0 egid=0
+
+[2025-08-10 09:28:27,502: INFO/MainProcess] Connected to redis://redis:6379/0
+[2025-08-10 09:28:27,505: INFO/MainProcess] mingle: searching for neighbors
+[2025-08-10 09:28:28,512: INFO/MainProcess] mingle: all alone
+[2025-08-10 09:28:28,552: INFO/MainProcess] celery@6b7bf3e02818 ready.
+[2025-08-10 09:28:28,557: ERROR/MainProcess] Received unregistered task of type 'apps.core.services.retrieve_github_data'.
+The message has been ignored and discarded.
+
+Did you remember to import the module containing this task?
+Or maybe you're using relative imports?
+
+Please see
+https://docs.celeryq.dev/en/latest/internals/protocol.html
+for more information.
+
+The full contents of the message body was:
+b'[["xxx", "xxxx", "xxxx"], {}, {"callbacks": null, "errbacks": null, "chain": null, "chord": null}]' (98b)
+
+The full contents of the message headers:
+{'lang': 'py', 'task': 'apps.core.services.retrieve_github_data', 'id': '020957d9-8330-4b49-9d75-c7799a6fdb8a', 'shadow': None, 'eta': None, 'expires': None, 'group': None, 'group_index': None, 'retries': 0, 'timelimit': [None, None], 'root_id': '020957d9-8330-4b49-9d75-c7799a6fdb8a', 'parent_id': None, 'argsrepr': "['xxx', 'xxxx', 'xxxx']", 'kwargsrepr': '{}', 'origin': 'gen74@6b7bf3e02818', 'ignore_result': False, 'replaced_task_nesting': 0, 'stamped_headers': None, 'stamps': {}, 'periodic_task_name': 'Retrieve GitHub Data Daily'}
+
+The delivery info for this task is:
+{'exchange': '', 'routing_key': 'celery'}
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.10/site-packages/celery/worker/consumer/consumer.py", line 662, in on_task_received
+    strategy = strategies[type_]
+KeyError: 'apps.core.services.retrieve_github_data'
+[2025-08-10 09:28:28,567: INFO/MainProcess] Task celery.backend_cleanup[b49aed87-044d-4161-9e1c-556d232e6b63] received
+[2025-08-10 09:28:28,574: INFO/ForkPoolWorker-15] Task celery.backend_cleanup[b49aed87-044d-4161-9e1c-556d232e6b63] succeeded in 0.004842516005737707s: None
