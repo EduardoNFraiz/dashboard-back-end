@@ -14,3 +14,17 @@ User information: uid=0 euid=0 gid=0 egid=0
 [2025-08-10 10:57:19,055: INFO/MainProcess] mingle: searching for neighbors
 [2025-08-10 10:57:20,064: INFO/MainProcess] mingle: all alone
 [2025-08-10 10:57:20,083: INFO/MainProcess] celery@8824640bf3d7 ready.
+/usr/local/lib/python3.10/site-packages/oauth2_provider/__init__.py:1: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+SecurityWarning: You're running the worker with superuser privileges: this is
+absolutely not recommended!
+
+Please specify a different user using the --uid option.
+
+User information: uid=0 euid=0 gid=0 egid=0
+
+[2025-08-10 11:10:31,830: INFO/MainProcess] Connected to redis://redis:6379/0
+[2025-08-10 11:10:31,832: INFO/MainProcess] mingle: searching for neighbors
+[2025-08-10 11:10:32,840: INFO/MainProcess] mingle: all alone
+[2025-08-10 11:10:32,858: INFO/MainProcess] celery@e8ad00004937 ready.

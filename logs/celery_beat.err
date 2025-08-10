@@ -4,3 +4,7 @@
   import pkg_resources
 UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
 [2025-08-10 10:57:16,714: INFO/MainProcess] beat: Starting...
+/usr/local/lib/python3.10/site-packages/oauth2_provider/__init__.py:1: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+[2025-08-10 11:10:29,892: INFO/MainProcess] beat: Starting...

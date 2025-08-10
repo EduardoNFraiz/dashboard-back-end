@@ -155,3 +155,16 @@ UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), p
 [2025-08-10 11:05:30 -0300] [715] [INFO] Worker exiting (pid: 715)
 [2025-08-10 11:05:30 -0300] [714] [INFO] Worker exiting (pid: 714)
 [2025-08-10 14:05:31 +0000] [577] [INFO] Shutting down: Master
+/usr/local/lib/python3.10/site-packages/gunicorn/util.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+[2025-08-10 14:10:26 +0000] [79] [INFO] Starting gunicorn 20.1.0
+[2025-08-10 14:10:26 +0000] [79] [INFO] Listening at: http://0.0.0.0:8000 (79)
+[2025-08-10 14:10:26 +0000] [79] [INFO] Using worker: sync
+[2025-08-10 14:10:26 +0000] [80] [INFO] Booting worker with pid: 80
+[2025-08-10 14:10:26 +0000] [81] [INFO] Booting worker with pid: 81
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+[2025-08-10 14:14:26 +0000] [79] [INFO] Handling signal: term
+[2025-08-10 11:14:26 -0300] [81] [INFO] Worker exiting (pid: 81)
+[2025-08-10 11:14:26 -0300] [80] [INFO] Worker exiting (pid: 80)
+[2025-08-10 14:14:26 +0000] [79] [INFO] Shutting down: Master
