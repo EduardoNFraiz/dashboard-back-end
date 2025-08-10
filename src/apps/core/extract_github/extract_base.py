@@ -32,18 +32,18 @@ class ExtractBase(ABC):
     sink: Any = None  # Data sink, in this case Neo4j (via SinkNeo4j)
 
     organization:str = None #Organization
-    secret:str = None #secret
     repository:str = None #epository
 
-    def __init__(self, organization:str, secret:str, repository:str ) -> None:
+    def __init__(self, organization:str, secret:str, repository:str, streams:list[str]) -> None:
         """Post-initialization hook."""
         logger.info("Initializing ExtractBase...")
         load_dotenv()
         logger.debug("Environment variables loaded.")
         
         self.organization = organization
-        self.secret = secret
+        self.token = secret
         self.repository = repository
+        self.streams = streams
 
         # Initialize the Neo4j sink
         try:
@@ -54,7 +54,6 @@ class ExtractBase(ABC):
             raise
 
         # Load GitHub token from .env
-        self.token = self.secret
         if not self.token:
             logger.warning("GITHUB_TOKEN not found in environment variables.")
         else:
