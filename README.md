@@ -4,6 +4,8 @@
 
 **Dashboard - The Band** is the orchestrator of a semantic, modular, and intelligent service architecture. Each service acts like a band member, transforming structured and unstructured data into meaningful insights — like musicians creating harmony from notes.
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=The-Band-Solution_dashboard&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=The-Band-Solution_dashboard)[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=The-Band-Solution_dashboard)](https://sonarcloud.io/summary/new_code?id=The-Band-Solution_dashboard)
+
 ---
 
 ## 🚀 Tech Stack

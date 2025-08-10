@@ -2662,3 +2662,7 @@ UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), p
 [2025-08-10 14:59:31 +0000] [4058] [INFO] Booting worker with pid: 4058
 UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
 UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+[2025-08-10 15:12:38 +0000] [762] [INFO] Handling signal: term
+[2025-08-10 12:12:38 -0300] [4057] [INFO] Worker exiting (pid: 4057)
+[2025-08-10 12:12:38 -0300] [4058] [INFO] Worker exiting (pid: 4058)
+[2025-08-10 15:12:38 +0000] [762] [INFO] Shutting down: Master
