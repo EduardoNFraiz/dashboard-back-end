@@ -47,8 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.admindocs',
 # 3rd-party Apps
     'django_cpf_cnpj',
-    'easyaudit',
-    'polymorphic',
+    'easyaudit',    
     'rest_framework', 
     'rest_framework.authtoken',
     'oauth2_provider',

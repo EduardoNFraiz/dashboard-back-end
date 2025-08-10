@@ -1,8 +1,10 @@
 from .models import (
-    Application,
+    Application, Configuration, Organization
 )
 from .serializers import (
     ApplicationReadSerializer, ApplicationWriteSerializer,
+    ConfigurationReadSerializer, ConfigurationWriteSerializer,
+    OrganizationReadSerializer,OrganizationWriteSerializer
 )
 
 from rest_framework.viewsets import ModelViewSet
@@ -33,7 +35,7 @@ class ApplicationViewSet(ModelViewSet):
         django_filters.rest_framework.DjangoFilterBackend
     )
     filterset_fields = '__all__'
-    search_fields = ['github', 'repository']
+    search_fields = ['name']
     ordering_fields = '__all__'
     ordering = ["id"]
     
@@ -41,6 +43,48 @@ class ApplicationViewSet(ModelViewSet):
         if self.request.method in ['GET']:
             return ApplicationReadSerializer
         return ApplicationWriteSerializer
+
+
+class ConfigurationViewSet(ModelViewSet):
+    queryset = Configuration.objects.all()
+    pagination_class = CustomPagination
+    authentication_classes = [OAuth2Authentication, SessionAuthentication]
+    permission_classes = permission_classes = [Or(IsAdminUser, TokenHasReadWriteScope)]
+    filter_backends = (
+        filters.SearchFilter,
+        filters.OrderingFilter,
+        django_filters.rest_framework.DjangoFilterBackend
+    )
+    filterset_fields = '__all__'
+    search_fields = ['name']
+    ordering_fields = '__all__'
+    ordering = ["id"]
+    
+    def get_serializer_class(self):
+        if self.request.method in ['GET']:
+            return ConfigurationReadSerializer
+        return ConfigurationWriteSerializer
+    
+class OrganizationViewSet(ModelViewSet):
+    queryset = Organization.objects.all()
+    pagination_class = CustomPagination
+    authentication_classes = [OAuth2Authentication, SessionAuthentication]
+    permission_classes = permission_classes = [Or(IsAdminUser, TokenHasReadWriteScope)]
+    filter_backends = (
+        filters.SearchFilter,
+        filters.OrderingFilter,
+        django_filters.rest_framework.DjangoFilterBackend
+    )
+    filterset_fields = '__all__'
+    search_fields = ['name']
+    ordering_fields = '__all__'
+    ordering = ["id"]
+    
+    def get_serializer_class(self):
+        if self.request.method in ['GET']:
+            return OrganizationReadSerializer
+        return OrganizationWriteSerializer
+
 
 class IssueView(ViewSet):
 
