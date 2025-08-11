@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: dashboard_the_band
+    container_name: dashboard_theband
     ports:
       - "8000:8000"
       - "5555:5555"
@@ -22,8 +22,10 @@ services:
 
   db:
     image: postgres:15
-    container_name: db
+    container_name: db_theband
     restart: always
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
@@ -35,7 +37,7 @@ services:
 
   redis:
     image: redis:7
-    container_name: dashboard_redis
+    container_name: redis_theband
     ports:
       - "6379:6379"
     restart: always

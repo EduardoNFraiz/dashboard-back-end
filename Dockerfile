@@ -11,7 +11,8 @@ WORKDIR /app
 
 # Copia tudo do projeto (raiz, onde está o docker-compose.yml)
 COPY ./src/ .
-
+COPY .env .
+COPY supervisord.conf .
 # Instala dependências do sistema
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -39,6 +40,4 @@ COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
-# Inicia com Gunicorn apontando para src.dashboard.wsgi
-#CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--reload", "--timeout=8000", "--workers=2", "dashboard.wsgi:application"]
 CMD ["supervisord", "-c", "/etc/supervisord.conf"]
