@@ -17,16 +17,15 @@ class ExtractCIRO(ExtractBase):
 
     def __init__(self, organization:str, secret:str, repository:str) -> None:
         """Initialize the extractor and define streams to load from Airbyte."""
-        super().__init__(organization=organization, secret=secret, repository=repository)
         self.logger = LoggerFactory.get_logger(__name__)
-        self.streams = [
+        streams = [
             "issue_milestones",
             "issues",
             "pull_request_commits",
             "pull_requests",
             "issue_labels",
         ]
-        super().__init__()
+        super().__init__(organization=organization, secret=secret, repository=repository,streams=streams)
         self.logger.debug("Initialized ExtractCIRO with streams: %s", self.streams)
 
     def fetch_data(self) -> None:

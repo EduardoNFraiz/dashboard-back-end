@@ -14,10 +14,9 @@ class ExtractCMPO(ExtractBase):
 
     def __init__(self, organization:str, secret:str, repository:str) -> None:
         """Initialize the extractor and define streams to load from Airbyte."""
-        super().__init__(organization=organization, secret=secret, repository=repository)            
         self.logger = LoggerFactory.get_logger(__name__)
-        self.streams = ["repositories", "projects_v2", "commits", "branches"]
-        super().__init__()
+        streams = ["repositories", "projects_v2", "commits", "branches"]
+        super().__init__(organization=organization, secret=secret, repository=repository,streams=streams)            
         self.logger.debug("CMPO extractor initialized with streams: %s", self.streams)
 
     def fetch_data(self) -> None:

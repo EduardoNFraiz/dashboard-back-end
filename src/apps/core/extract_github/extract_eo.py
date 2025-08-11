@@ -16,9 +16,9 @@ class ExtractEO(ExtractBase):
 
     def __init__(self, organization:str, secret:str, repository:str) -> None:
         """Post-initialization hook."""
-        super().__init__(organization=organization, secret=secret, repository=repository)
         self.logger = LoggerFactory.get_logger(__name__)
-        self.streams = ["projects_v2", "teams", "team_members"]
+        streams = ["projects_v2", "teams", "team_members"]
+        super().__init__(organization=organization, secret=secret, repository=repository,streams=streams)
         
 
     def fetch_data(self) -> None:

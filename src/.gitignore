@@ -9,8 +9,8 @@ staticfiles/
 
 # C extensions
 *.so
-
-
+logs/
+.env
 # Distribution / packaging
 .Python
 build/
