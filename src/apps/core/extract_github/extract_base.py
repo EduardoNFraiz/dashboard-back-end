@@ -67,9 +67,9 @@ class ExtractBase(ABC):
                 logger.warning("REPOSITORIES environment variable is not set.")
 
             config = {
-                "repositories": [repositories],
+                "repositories": [f"{self.repository}"],
                 "credentials": {
-                    "personal_access_token": self.token,
+                    "personal_access_token": f"{self.token}",
                 },
             }
             logger.debug(f"Airbyte source initial config: {config}")

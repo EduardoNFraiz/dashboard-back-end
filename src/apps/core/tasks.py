@@ -16,8 +16,8 @@ def retrieve_github_data(organization, secret, repository):
     
     chain(
         retrieve_github_eo_data.si(organization,secret,repository),
-        #retrieve_github_cmpo_data.si(organization,secret,repository),
-        #retrieve_github_ciro_data.si(organization,secret,repository),
+        retrieve_github_cmpo_data.si(organization,secret,repository),
+        retrieve_github_ciro_data.si(organization,secret,repository),
     )()
 
 
@@ -41,19 +41,22 @@ def setup_periodic_tasks(organization, secret, repository):
         pass    
 
 @shared_task
-def retrieve_github_eo_data(organization, secret, repositories):
+def retrieve_github_eo_data(organization, secret, repository):
     logger.info (f" Retrieve EO Data")
-    ExtractEO().run()
-    logger.info (f"{organization} - {secret} - {repositories}")
+    instance = ExtractEO(organization=organization, secret=secret, repository=repository)
+    instance.run()
+    logger.info (f"{organization} - {secret} - {repository}")
 
 @shared_task
-def retrieve_github_cmpo_data(organization, secret, repositories):
+def retrieve_github_cmpo_data(organization, secret, repository):
     logger.info (f" Retrieve CMPO Data")
-    ExtractCMPO().run()
-    logger.info (f"{organization} - {secret} - {repositories}")
+    instance = ExtractCMPO(organization=organization, secret=secret, repository=repository)
+    instance.run()
+    logger.info (f"{organization} - {secret} - {repository}")
 
 @shared_task
-def retrieve_github_ciro_data(organization, secret, repositories):
+def retrieve_github_ciro_data(organization, secret, repository):
     logger.info (f" Retrieve CIRO Data")
-    ExtractCIRO().run()
-    logger.info (f"{organization} - {secret} - {repositories}")
+    instance = ExtractCIRO(organization=organization, secret=secret, repository=repository)
+    instance.run()
+    logger.info (f"{organization} - {secret} - {repository}")
