@@ -1,0 +1,98 @@
+/usr/local/lib/python3.10/site-packages/gunicorn/util.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+[2025-08-11 02:23:49 +0000] [77] [INFO] Starting gunicorn 20.1.0
+[2025-08-11 02:23:49 +0000] [77] [INFO] Listening at: http://0.0.0.0:8000 (77)
+[2025-08-11 02:23:49 +0000] [77] [INFO] Using worker: sync
+[2025-08-11 02:23:49 +0000] [78] [INFO] Booting worker with pid: 78
+[2025-08-11 02:23:49 +0000] [79] [INFO] Booting worker with pid: 79
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+[2025-08-10 23:35:24 -0300] [78] [INFO] Worker reloading: /app/src/apps/core/extract_github/extract_base.py modified
+[2025-08-10 23:35:24 -0300] [78] [INFO] Worker exiting (pid: 78)
+[2025-08-10 23:35:24 -0300] [79] [INFO] Worker reloading: /app/src/apps/core/extract_github/extract_base.py modified
+[2025-08-10 23:35:24 -0300] [79] [INFO] Worker exiting (pid: 79)
+[2025-08-11 02:35:24 +0000] [314] [INFO] Booting worker with pid: 314
+[2025-08-11 02:35:24 +0000] [315] [INFO] Booting worker with pid: 315
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+[2025-08-10 23:35:31 -0300] [314] [INFO] Worker reloading: /app/src/apps/core/extract_github/extract_base.py modified
+[2025-08-10 23:35:31 -0300] [314] [INFO] Worker exiting (pid: 314)
+[2025-08-10 23:35:31 -0300] [315] [INFO] Worker reloading: /app/src/apps/core/extract_github/extract_base.py modified
+[2025-08-10 23:35:31 -0300] [315] [INFO] Worker exiting (pid: 315)
+[2025-08-11 02:35:31 +0000] [382] [INFO] Booting worker with pid: 382
+[2025-08-11 02:35:31 +0000] [383] [INFO] Booting worker with pid: 383
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+/usr/local/lib/python3.10/site-packages/gunicorn/util.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+[2025-08-11 11:49:45 +0000] [77] [INFO] Starting gunicorn 20.1.0
+[2025-08-11 11:49:45 +0000] [77] [INFO] Listening at: http://0.0.0.0:8000 (77)
+[2025-08-11 11:49:45 +0000] [77] [INFO] Using worker: sync
+[2025-08-11 11:49:45 +0000] [78] [INFO] Booting worker with pid: 78
+[2025-08-11 11:49:45 +0000] [79] [INFO] Booting worker with pid: 79
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+[2025-08-11 08:50:10 -0300] [79] [INFO] Worker reloading: /app/src/apps/core/extract_github/extract_base.py modified
+[2025-08-11 08:50:10 -0300] [79] [INFO] Worker exiting (pid: 79)
+[2025-08-11 11:50:11 +0000] [267] [INFO] Booting worker with pid: 267
+[2025-08-11 08:50:11 -0300] [78] [INFO] Worker reloading: /app/src/apps/core/extract_github/extract_base.py modified
+[2025-08-11 08:50:11 -0300] [78] [INFO] Worker exiting (pid: 78)
+[2025-08-11 11:50:12 +0000] [284] [INFO] Booting worker with pid: 284
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+[2025-08-11 08:50:21 -0300] [284] [INFO] Worker reloading: /app/src/apps/core/extract_github/extract_base.py modified
+[2025-08-11 08:50:21 -0300] [284] [INFO] Worker exiting (pid: 284)
+[2025-08-11 08:50:21 -0300] [267] [INFO] Worker reloading: /app/src/apps/core/extract_github/extract_base.py modified
+[2025-08-11 08:50:21 -0300] [267] [INFO] Worker exiting (pid: 267)
+[2025-08-11 11:50:21 +0000] [335] [INFO] Booting worker with pid: 335
+[2025-08-11 11:50:22 +0000] [336] [INFO] Booting worker with pid: 336
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+[2025-08-11 08:50:28 -0300] [335] [INFO] Worker reloading: /app/src/apps/core/extract_github/extract_base.py modified
+[2025-08-11 08:50:28 -0300] [335] [INFO] Worker exiting (pid: 335)
+[2025-08-11 08:50:28 -0300] [336] [INFO] Worker reloading: /app/src/apps/core/extract_github/extract_base.py modified
+[2025-08-11 08:50:28 -0300] [336] [INFO] Worker exiting (pid: 336)
+[2025-08-11 11:50:29 +0000] [403] [INFO] Booting worker with pid: 403
+[2025-08-11 11:50:29 +0000] [404] [INFO] Booting worker with pid: 404
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+[2025-08-11 11:50:34 +0000] [77] [INFO] Handling signal: term
+[2025-08-11 08:50:34 -0300] [403] [INFO] Worker exiting (pid: 403)
+[2025-08-11 08:50:34 -0300] [404] [INFO] Worker exiting (pid: 404)
+/usr/local/lib/python3.10/site-packages/gunicorn/util.py:25: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+[2025-08-11 11:54:03 +0000] [81] [INFO] Starting gunicorn 20.1.0
+[2025-08-11 11:54:03 +0000] [81] [INFO] Listening at: http://0.0.0.0:8000 (81)
+[2025-08-11 11:54:03 +0000] [81] [INFO] Using worker: sync
+[2025-08-11 11:54:03 +0000] [82] [INFO] Booting worker with pid: 82
+[2025-08-11 11:54:03 +0000] [83] [INFO] Booting worker with pid: 83
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+[2025-08-11 11:03:07 -0300] [83] [INFO] Worker reloading: /app/src/apps/core/extract_github/extract_ciro.py modified
+[2025-08-11 11:03:07 -0300] [83] [INFO] Worker exiting (pid: 83)
+[2025-08-11 11:03:07 -0300] [82] [INFO] Worker reloading: /app/src/apps/core/extract_github/extract_ciro.py modified
+[2025-08-11 11:03:07 -0300] [82] [INFO] Worker exiting (pid: 82)
+[2025-08-11 14:03:08 +0000] [330] [INFO] Booting worker with pid: 330
+[2025-08-11 14:03:08 +0000] [331] [INFO] Booting worker with pid: 331
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+[2025-08-11 11:03:18 -0300] [330] [INFO] Worker reloading: /app/src/apps/core/extract_github/extract_cmpo.py modified
+[2025-08-11 11:03:18 -0300] [330] [INFO] Worker exiting (pid: 330)
+[2025-08-11 11:03:18 -0300] [331] [INFO] Worker reloading: /app/src/apps/core/extract_github/extract_cmpo.py modified
+[2025-08-11 11:03:18 -0300] [331] [INFO] Worker exiting (pid: 331)
+[2025-08-11 14:03:19 +0000] [398] [INFO] Booting worker with pid: 398
+[2025-08-11 14:03:19 +0000] [399] [INFO] Booting worker with pid: 399
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+[2025-08-11 11:03:29 -0300] [398] [INFO] Worker reloading: /app/src/apps/core/extract_github/extract_cmpo.py modified
+[2025-08-11 11:03:29 -0300] [398] [INFO] Worker exiting (pid: 398)
+[2025-08-11 11:03:29 -0300] [399] [INFO] Worker reloading: /app/src/apps/core/extract_github/extract_cmpo.py modified
+[2025-08-11 11:03:29 -0300] [399] [INFO] Worker exiting (pid: 399)
+[2025-08-11 14:03:29 +0000] [466] [INFO] Booting worker with pid: 466
+[2025-08-11 14:03:29 +0000] [467] [INFO] Booting worker with pid: 467
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+UserWarning: You have an incompatible version of 'pyarrow' installed (21.0.0), please install a version that adheres to: 'pyarrow<19.0.0; extra == "pandas"'
+[2025-08-12 02:01:11 +0000] [81] [INFO] Handling signal: term
+[2025-08-11 23:01:11 -0300] [466] [INFO] Worker exiting (pid: 466)
+[2025-08-11 23:01:11 -0300] [467] [INFO] Worker exiting (pid: 467)
+[2025-08-12 02:01:12 +0000] [81] [INFO] Shutting down: Master

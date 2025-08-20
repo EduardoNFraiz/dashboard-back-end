@@ -317,4 +317,5 @@ class ExtractCIRO(ExtractBase):
         self.__load_pull_requests()
         self.__load_pull_request_commit()
         self.__load_issue()
+        self.create_config_domain("ciro")
         self.logger.info("✅ Extraction completed successfully!")

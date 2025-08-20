@@ -367,8 +367,13 @@ class ExtractBase(ABC):
     def create_config_domain(self,name:str) -> None:
         """Load retrieve date."""
         logger.info("Creating retrieve date configuration node.")
+        
+        
         today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
-        start_date = today.isoformat() + "Z"
+        # Remove timezone info para formatar como string ISO sem fuso
+        start_date = today.replace(tzinfo=None).strftime("%Y-%m-%dT%H:%M:%S") + 'Z'
+
+
         organization_id = self.organization
         organization_name = self.organization
 
