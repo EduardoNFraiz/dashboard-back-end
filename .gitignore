@@ -3,6 +3,8 @@ __pycache__/
 *.py[codz]
 *$py.class
 .venv/
+.venv-source-github/
+logs/
 # C extensions
 *.so
 .env
