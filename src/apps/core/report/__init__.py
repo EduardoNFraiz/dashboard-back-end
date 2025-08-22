@@ -1,4 +1,4 @@
-###### Gerando um relatório sobre o percentual de issues por repositorio, aberto e fechados.
+""" Gerando um relatório sobre o percentual de issues por repositorio, aberto e fechados.
 
 # Conta todos os issues de um repositotio
 MATCH (r:Repository)-[:has]->(i:Issue)
@@ -43,3 +43,4 @@ RETURN
   total_issues_repo,
   round(toFloat(total_issues_by_state) / total_issues_repo * 100, 2) AS percentage
 ORDER BY repo_name, percentage DESC
+"""
