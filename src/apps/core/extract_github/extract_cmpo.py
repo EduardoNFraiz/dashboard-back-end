@@ -6,6 +6,9 @@ import json  # noqa: I001
 class ExtractCMPO(ExtractBase):
     """Extracts CMPO data and stores it in Neo4j."""
 
+    SOURCECODE= "sourcecode"
+    PROJECT="project"
+
     branches: Any = None
     issues: Any = None
     commits: Any = None
@@ -40,23 +43,23 @@ class ExtractCMPO(ExtractBase):
             self.branches = self.cache["branches"].to_pandas()
             self.logger.info(f"{len(self.branches)} branches loaded.")
 
-    def __load_repository(self) -> None:
-        """Load repositories."""
-        self.logger.info("Loading repositories...")
+    def __load_source_code(self) -> None:
+        """Load Source Code."""
+        self.logger.info("Loading Source Code...")
         for repository in self.repositories.itertuples():
             data = self.transform(repository)
-            self.logger.debug("Repository transformed: %s", data)
-            node = self.create_node(data, "Repository", "id")
+            self.logger.debug("Source Code transformed: %s", data)
+            node = self.create_node(data, self.SOURCECODE, "id")
             self.create_relationship(self.organization_node, "has", node)
-            self.logger.info(f"Repository node created and linked: {data['id']}")
+            self.logger.info(f"Source Code node created and linked: {data['id']}")
 
     def __load_repository_project(self) -> None:
         """Link repositories to projects."""
         self.logger.info("Linking repositories to projects...")
         for project in self.projects.itertuples():
             self.logger.debug("Processing project: %s", project.id)
-            repository_node = self.get_node("Repository", full_name=project.repository)
-            project_node = self.get_node("Project", id=project.id)
+            repository_node = self.get_node(self.SOURCECODE, full_name=project.repository)
+            project_node = self.get_node(self.PROJECT, id=project.id)
 
             if repository_node and project_node:
                 self.create_relationship(project_node, "has", repository_node)
@@ -235,7 +238,7 @@ class ExtractCMPO(ExtractBase):
         """Run the full extraction and persistence process."""
         self.logger.info("🔄 Starting CMPO extraction...")
         self.fetch_data()
-        self.__load_repository()
+        self.__load_source_code()
         self.__load_repository_project()
         self.__load_branchs()
         self.__load_commits()
