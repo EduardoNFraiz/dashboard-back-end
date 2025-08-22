@@ -3,6 +3,18 @@ from .base import Neo4jRepository
 
 
 class IssueRepository(Neo4jRepository):
+    
+    ALL_RELATION_ISSUE_PERSON = """
+      MATCH (p1:Person)-[r1]-(i:Issue)-[r2]-(p2:Person)
+      WHERE id(p1) < id(p2)  
+      RETURN    
+        p2.name AS person_from,
+        type(r2) AS relation_from,
+        i.title AS issue,
+        p1.name AS person_to,
+        type(r1) AS relation_to
+      ORDER BY person_from, relation_to, issue
+    """
 
     ALL_ISSUES_FROM_MILETONE  = """
         MATCH (r:Repository)-[:has]->(m:Milestone)-[:has]->(i:Issue)
@@ -127,60 +139,59 @@ class IssueRepository(Neo4jRepository):
 
     """
 
-
     ### procurando issues com problemas no mapeamento
+    ISSUE_WITH_AND_WITHOUT_MILESTONE = """
+    // Contar issues sem milestone
+    CALL {
+      MATCH (i:Issue)
+      WHERE NOT ( (:Milestone)-[:has]->(i) )
+      RETURN COUNT(i) AS issues_without_milestone
+    }
+
+    // Contar issues com milestone, mas sem repository
+    CALL {
+      MATCH (i:Issue)<-[:has]-(m:Milestone)
+      WHERE NOT ( (:Repository)-[:has]->(m) )
+      RETURN COUNT(i) AS issues_without_repository
+    }
+
+    // Contar issues com milestone e repo, mas sem organização
+    CALL {
+      MATCH (i:Issue)<-[:has]-(m:Milestone)<-[:has]-(r:Repository)
+      WHERE NOT ( (:Organization)-[:has]->(r) )
+      RETURN COUNT(i) AS issues_without_organization
+    }
+
+    // Contar issues totalmente órfãs (não participam do caminho completo)
+    CALL {
+      MATCH (i:Issue)
+      WHERE NOT (
+        (:Organization)-[:has]->(:Repository)-[:has]->(:Milestone)-[:has]->(i)
+      )
+      RETURN COUNT(i) AS total_orphan_issues
+    }
+
+    // Contar issues corretamente ligadas a um milestone
+    CALL {
+      MATCH (i:Issue)<-[:has]-(:Milestone)
+      RETURN COUNT(i) AS issues_with_milestone
+    }
+
+    // Contar total de issues no grafo
+    CALL {
+      MATCH (i:Issue)
+      RETURN COUNT(i) AS total_issues
+    }
+
+    // Retorna todos os dados de auditoria
+    RETURN 
+      total_issues,
+      issues_with_milestone,
+      issues_without_milestone,
+      issues_without_repository,
+      issues_without_organization,
+      total_orphan_issues
     """
-// Contar issues sem milestone
-CALL {
-  MATCH (i:Issue)
-  WHERE NOT ( (:Milestone)-[:has]->(i) )
-  RETURN COUNT(i) AS issues_without_milestone
-}
-
-// Contar issues com milestone, mas sem repository
-CALL {
-  MATCH (i:Issue)<-[:has]-(m:Milestone)
-  WHERE NOT ( (:Repository)-[:has]->(m) )
-  RETURN COUNT(i) AS issues_without_repository
-}
-
-// Contar issues com milestone e repo, mas sem organização
-CALL {
-  MATCH (i:Issue)<-[:has]-(m:Milestone)<-[:has]-(r:Repository)
-  WHERE NOT ( (:Organization)-[:has]->(r) )
-  RETURN COUNT(i) AS issues_without_organization
-}
-
-// Contar issues totalmente órfãs (não participam do caminho completo)
-CALL {
-  MATCH (i:Issue)
-  WHERE NOT (
-    (:Organization)-[:has]->(:Repository)-[:has]->(:Milestone)-[:has]->(i)
-  )
-  RETURN COUNT(i) AS total_orphan_issues
-}
-
-// Contar issues corretamente ligadas a um milestone
-CALL {
-  MATCH (i:Issue)<-[:has]-(:Milestone)
-  RETURN COUNT(i) AS issues_with_milestone
-}
-
-// Contar total de issues no grafo
-CALL {
-  MATCH (i:Issue)
-  RETURN COUNT(i) AS total_issues
-}
-
-// Retorna todos os dados de auditoria
-RETURN 
-  total_issues,
-  issues_with_milestone,
-  issues_without_milestone,
-  issues_without_repository,
-  issues_without_organization,
-  total_orphan_issues
-"""
     
     def get_all_issue_repositories(self, skip: int = 0, limit: int = 10):
       
@@ -215,4 +226,13 @@ RETURN
         raw_data = self.execute(self.ALL_FEATURES_IN_MILESTONE, skip=skip, limit=limit)
         return raw_data
     
+    def get_all_relation_issue_person(self, skip: int = 0, limit: int = 10):
+        """ Retrieve all relations between issues and persons """
+        raw_data = self.execute(self.ALL_RELATION_ISSUE_PERSON, skip=skip, limit=limit)
+        return raw_data
+
+    def get_all_issue_with_without_milestone(self, skip: int = 0, limit: int = 10):
+        """ Retrieve all issues with and without milestones """
+        raw_data = self.execute(self.ISSUE_WITH_AND_WITHOUT_MILESTONE, skip=skip, limit=limit)
+        return raw_data
     

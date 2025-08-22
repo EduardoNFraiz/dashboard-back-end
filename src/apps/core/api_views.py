@@ -110,3 +110,19 @@ class IssueView(ViewSet):
             })
         finally:
             repo.close()
+            
+    def retrieve(self, request, pk=None):
+        """
+        Retorna uma única issue pelo ID (pk).
+        """
+        if pk is None:
+            return Response({"error": "Issue id (pk) is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        repo = IssueRepository()
+        try:
+            issue = repo.get_issue_by_id(pk)  # ajuste o nome se no seu repo for diferente
+            if not issue:
+                return Response({"error": "Issue not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"data": issue}, status=status.HTTP_200_OK)
+        finally:
+            repo.close()
