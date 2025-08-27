@@ -8,6 +8,9 @@ class ExtractCMPO(ExtractBase):
 
     SOURCECODE= "sourcecode"
     PROJECT="project"
+    PERSON="person"
+
+    HAS = "has"
 
     branches: Any = None
     issues: Any = None
@@ -50,7 +53,7 @@ class ExtractCMPO(ExtractBase):
             data = self.transform(repository)
             self.logger.debug("Source Code transformed: %s", data)
             node = self.create_node(data, self.SOURCECODE, "id")
-            self.create_relationship(self.organization_node, "has", node)
+            self.create_relationship(self.organization_node, self.HAS, node)
             self.logger.info(f"Source Code node created and linked: {data['id']}")
 
     def __load_repository_project(self) -> None:
@@ -62,7 +65,7 @@ class ExtractCMPO(ExtractBase):
             project_node = self.get_node(self.PROJECT, id=project.id)
 
             if repository_node and project_node:
-                self.create_relationship(project_node, "has", repository_node)
+                self.create_relationship(project_node, self.HAS, repository_node)
                 self.logger.info(
                     "Linked Project: %s - %s",
                     project.id,
@@ -124,10 +127,10 @@ class ExtractCMPO(ExtractBase):
             node_data = {**data, **self.flatten_dict(combined, "")}
             node = self.create_node(node_data, "Commit", "id")
 
-            repository_node = self.get_node("Repository", full_name=commit.repository)
-            
+            repository_node = self.get_node(self.SOURCECODE, full_name=commit.repository)
+
             if repository_node:
-                self.create_relationship(repository_node, "has", node)
+                self.create_relationship(repository_node, self.HA, node)
                 self.create_relationship(node, "belongs_to", repository_node)
             else:
                 self.logger.warning(

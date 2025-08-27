@@ -85,7 +85,7 @@ class ExtractEO(ExtractBase):
         self.logger.info("Creating Team nodes and relationships...")
         for team in self.teams.itertuples():
             data = self.transform(team)
-            team_node = self.create_node(data, "Team", "id")
+            team_node = self.create_node(data, self.TEAM, "id")
             self.logger.info("🔄 Creating Team... %s", team.name)
             self.create_relationship(self.organization_node, self.HAS, team_node)
 
