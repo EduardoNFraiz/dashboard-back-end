@@ -28,8 +28,7 @@ RUN apt-get update && apt-get install -y \
 # Instala dependências Python
 #RUN pip install flower
 RUN pip install -r requirements.txt
-RUN pip install airbyte
-RUN pip install py2neo
+#RUN pip install py2neo
 
 RUN python manage.py collectstatic --noinput --no-post-process
 RUN mkdir -p /app/logs
