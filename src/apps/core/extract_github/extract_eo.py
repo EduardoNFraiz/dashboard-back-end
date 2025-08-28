@@ -6,7 +6,18 @@ from .logging_config import LoggerFactory  # noqa: I001
 class ExtractEO(ExtractBase):
     """Extracts and loads data related to teams, team members, and projects."""
 
-    # DataFrames extracted from Airbyte
+    TEAM = "team"
+    TEAM_MEMBER = "teammember"
+    PROJECT = "project"
+    PERSON = "person"
+
+    DONE_FOR = "done_for"
+    COMPOSED_OF = "composed_of"
+    ALLOCATES = "allocates"
+    PRESENT_IN = "present_in"
+    ALLOCATED = "allocated"
+    HAS = "has"
+
     team_members: Any = None
     teams: Any = None
     projects: Any = None
@@ -43,8 +54,8 @@ class ExtractEO(ExtractBase):
         self.logger.info("Creating Project nodes and relationships...")
         for project in self.projects.itertuples():
             data = self.transform(project)
-            project_node = self.create_node(data, "Project", "id")
-            self.create_relationship(self.organization_node, "has", project_node)
+            project_node = self.create_node(data, self.PROJECT, "id")
+            self.create_relationship(self.organization_node, self.HAS, project_node)
 
     def __load_team_member(self) -> None:
         """Create Person and TeamMember and links them to teams and the organization."""
@@ -54,30 +65,29 @@ class ExtractEO(ExtractBase):
             data["id"] = member.login
             data["name"] = member.login
 
-            person_node = self.create_node(data, "Person", "id")
-            self.create_relationship(person_node, "present_in", self.organization_node)
+            person_node = self.create_node(data, self.PERSON, "id")
+            self.create_relationship(person_node, self.PRESENT_IN, self.organization_node)
 
             if member.team_slug:
                 data["id"] = f"{member.login}-{member.team_slug}"
                 data["name"] = member.login
 
-                team_member_node = self.create_node(data, "TeamMember", "id")
-                team_node = self.sink.get_node("Team", slug=member.team_slug)
-               
-                self.create_relationship(team_member_node, "done_for", team_node)
-                self.create_relationship(team_node, "composed_of", team_member_node)
-                self.create_relationship(team_member_node, "allocates", person_node)
-                self.create_relationship(person_node, "allocated", team_member_node)
-                
+                team_member_node = self.create_node(data, self.TEAM_MEMBER, "id")
+                team_node = self.sink.get_node(self.TEAM, slug=member.team_slug)
+
+                self.create_relationship(team_member_node, self.DONE_FOR, team_node)
+                self.create_relationship(team_node, self.COMPOSED_OF, team_member_node)
+                self.create_relationship(team_member_node, self.ALLOCATES, person_node)
+                self.create_relationship(person_node, self.ALLOCATED, team_member_node)
 
     def __load_team(self) -> None:
         """Create Team nodes and links them to the organization."""
         self.logger.info("Creating Team nodes and relationships...")
         for team in self.teams.itertuples():
             data = self.transform(team)
-            team_node = self.create_node(data, "Team", "id")
+            team_node = self.create_node(data, self.TEAM, "id")
             self.logger.info("🔄 Creating Team... %s", team.name)
-            self.create_relationship(self.organization_node, "has", team_node)
+            self.create_relationship(self.organization_node, self.HAS, team_node)
 
     def run(self) -> None:
         """Orchestrate the full extraction and loading process."""
