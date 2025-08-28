@@ -28,7 +28,6 @@ RUN apt-get update && apt-get install -y \
 # Instala dependências Python
 RUN pip install -r requirements.txt
 
-
 RUN python manage.py collectstatic --noinput --no-post-process
 RUN mkdir -p /app/logs
 
