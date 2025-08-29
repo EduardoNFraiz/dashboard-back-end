@@ -130,7 +130,7 @@ class ExtractCMPO(ExtractBase):
             repository_node = self.get_node(self.SOURCECODE, full_name=commit.repository)
 
             if repository_node:
-                self.create_relationship(repository_node, self.HA, node)
+                self.create_relationship(repository_node, self.HAS, node)
                 self.create_relationship(node, "belongs_to", repository_node)
             else:
                 self.logger.warning(
