@@ -1,0 +1,71 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dashboard_theband
+    ports:
+      - "8000:8000"
+      - "5555:5555"
+    volumes:
+      - .:/app
+      - ./logs:/app/logs
+    working_dir: /app/src    
+    depends_on:
+      - db_theband
+      - redis
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/app/src
+    command: supervisord -c /etc/supervisord.conf
+
+  db_theband:
+    image: postgres:15
+    container_name: db_theband
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    env_file:
+      - .env
+
+  redis:
+    image: redis:7
+    container_name: redis_theband
+    ports:
+      - "6379:6379"
+    restart: always
+
+  neo4j:
+    image: neo4j:5.19
+    container_name: neo4j_theband
+    restart: unless-stopped
+    environment:
+      - NEO4J_AUTH=neo4j/${NEO4J_PASSWORD:-password123}
+      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+      - NEO4J_dbms_default__database=neo4j
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+    healthcheck:
+      test: ["CMD-SHELL", "cypher-shell -u neo4j -p ${NEO4J_PASSWORD:-password123} 'RETURN 1'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  neo4j_data:
+    driver: local
+  neo4j_logs:
+    driver: local

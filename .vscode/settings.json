@@ -1,0 +1,6 @@
+{
+    "sonarlint.connectedMode.project": {
+        "connectionId": "the-band-solution",
+        "projectKey": "dashboard_theband"
+    }
+}
