@@ -2,15 +2,10 @@ from typing import Any  # noqa: I001
 from .extract_base import ExtractBase  # noqa: I001
 from .logging_config import LoggerFactory  # noqa: I001
 import json  # noqa: I001
+from apps.core.extract_github.seon_concepts_dictionary import SOURCEREPOSITORY, PROJECT, PERSON, BRANCH, COMMIT, HAS, PRESENT_IN, CREATED_BY, COMMITTED_BY, IN, IS_PARENT, HAS_PARENT
 
 class ExtractCMPO(ExtractBase):
     """Extracts CMPO data and stores it in Neo4j."""
-
-    SOURCECODE= "sourcecode"
-    PROJECT="project"
-    PERSON="person"
-
-    HAS = "has"
 
     branches: Any = None
     issues: Any = None
@@ -52,20 +47,20 @@ class ExtractCMPO(ExtractBase):
         for repository in self.repositories.itertuples():
             data = self.transform(repository)
             self.logger.debug("Source Code transformed: %s", data)
-            node = self.create_node(data, self.SOURCECODE, "id")
+            node = self.create_node(data, SOURCEREPOSITORY, "id")
             self.create_relationship(self.organization_node, self.HAS, node)
             self.logger.info(f"Source Code node created and linked: {data['id']}")
 
     def __load_repository_project(self) -> None:
-        """Link repositories to projects."""
+        """Link repositories to projects. or Source Repositories to Projects."""
         self.logger.info("Linking repositories to projects...")
         for project in self.projects.itertuples():
             self.logger.debug("Processing project: %s", project.id)
-            repository_node = self.get_node(self.SOURCECODE, full_name=project.repository)
-            project_node = self.get_node(self.PROJECT, id=project.id)
+            repository_node = self.get_node(SOURCEREPOSITORY, full_name=project.repository)
+            project_node = self.get_node(PROJECT, id=project.id)
 
             if repository_node and project_node:
-                self.create_relationship(project_node, self.HAS, repository_node)
+                self.create_relationship(project_node, HAS, repository_node)
                 self.logger.info(
                     "Linked Project: %s - %s",
                     project.id,
@@ -125,13 +120,13 @@ class ExtractCMPO(ExtractBase):
                 continue
 
             node_data = {**data, **self.flatten_dict(combined, "")}
-            node = self.create_node(node_data, "Commit", "id")
+            node = self.create_node(node_data, COMMIT, "id")
 
-            repository_node = self.get_node(self.SOURCECODE, full_name=commit.repository)
+            repository_node = self.get_node(SOURCEREPOSITORY, full_name=commit.repository)
 
             if repository_node:
-                self.create_relationship(repository_node, self.HAS, node)
-                self.create_relationship(node, "belongs_to", repository_node)
+                self.create_relationship(repository_node, HAS, node)
+                self.create_relationship(node, PRESENT_IN, repository_node)
             else:
                 self.logger.warning(
                     "Repository not found for commit: %s", 
@@ -141,10 +136,10 @@ class ExtractCMPO(ExtractBase):
             if commit.author:
                 author = commit.author
                 login = author["login"]
-                user_node = self.get_node("Person", id=login)
+                user_node = self.get_node(PERSON, id=login)
                 
                 if user_node:
-                    self.create_relationship(node, "created_by", user_node)
+                    self.create_relationship(node, CREATED_BY, user_node)
                     self.logger.debug(
                         f"Linked author {login} to commit {commit.sha}"
                     )
@@ -152,10 +147,10 @@ class ExtractCMPO(ExtractBase):
                     self.logger.warning(f"Author not found: {login}")
                     author["id"] = login
                     author["name"] = login
-                    
-                    person_node = self.create_node(author, "Person", "id")
-                    self.create_relationship(person_node, "present_in", self.organization_node)
-                    self.create_relationship(node, "created_by", person_node)
+
+                    person_node = self.create_node(author, PERSON, "id")
+                    self.create_relationship(person_node, PRESENT_IN, self.organization_node)
+                    self.create_relationship(node, CREATED_BY, person_node)
                     self.logger.info(
                         f"Linked author {login} to commit {commit.sha}"
                     )
@@ -164,9 +159,9 @@ class ExtractCMPO(ExtractBase):
             if commit.committer:
                 committer = commit.committer
                 login = committer["login"]
-                user_node = self.get_node("Person", id=login)
+                user_node = self.get_node(self.PERSON, id=login)
                 if user_node:
-                    self.create_relationship(node, "commited_by", user_node)
+                    self.create_relationship(node, COMMITTED_BY, user_node)
                     self.logger.debug(
                         f"Linked committer {login} to commit {commit.sha}"
                     )
@@ -174,19 +169,19 @@ class ExtractCMPO(ExtractBase):
                     self.logger.warning(f"Committer not found: {login}")
                     committer["id "]= login
                     committer["name"] = login
-                    
-                    person_node = self.create_node(committer, "Person", "id")
-                    self.create_relationship(person_node, "present_in", self.organization_node)
-                    self.create_relationship(node, "commited_by", person_node)
+
+                    person_node = self.create_node(committer, PERSON, "id")
+                    self.create_relationship(person_node, PRESENT_IN, self.organization_node)
+                    self.create_relationship(node, COMMITTED_BY, person_node)
                     self.logger.info(
                         f"Linked committer {login} to commit {commit.sha}"
                     )
             # Branch
             branch_id = commit.branch + "-" + commit.repository
-            branch_node = self.get_node("Branch", id=branch_id)
+            branch_node = self.get_node(BRANCH, id=branch_id)
             if branch_node:
-                self.create_relationship(branch_node, "has", node)
-                self.create_relationship(node, "in", branch_node)
+                self.create_relationship(branch_node, HAS, node)
+                self.create_relationship(node, IN, branch_node)
                 self.logger.debug(f"Linked commit {commit.sha} to branch {branch_id}")
             else:
                 self.logger.warning(f"Branch not found: {branch_id}")
@@ -200,11 +195,11 @@ class ExtractCMPO(ExtractBase):
             parents = commit.parents
             
             for parent in parents:
-                commit_node = self.get_node("Commit", id=commit.sha)
-                parent_node = self.get_node("Commit", id=parent["sha"])
+                commit_node = self.get_node(COMMIT, id=commit.sha)
+                parent_node = self.get_node(COMMIT, id=parent["sha"])
                 if commit_node and parent_node:
-                    self.create_relationship(parent_node, "is_parent", commit_node)
-                    self.create_relationship(commit_node, "has_parent", parent_node)
+                    self.create_relationship(parent_node, IS_PARENT, commit_node)
+                    self.create_relationship(commit_node, HAS_PARENT, parent_node)
                     self.logger.debug(f"Linked {parent['sha']} -> {commit.sha}")
                 else:
                     self.logger.info(
@@ -221,14 +216,14 @@ class ExtractCMPO(ExtractBase):
             data["id"] = data["name"] + "-" + data["repository"]
             self.logger.debug("Branch transformed: %s", data["id"])
 
-            node = self.create_node(data, "Branch", "id")
+            node = self.create_node(data, BRANCH, "id")
 
             if branch.repository:
                 repository_node = self.get_node(
-                    "Repository", full_name=branch.repository
+                    SOURCEREPOSITORY, full_name=branch.repository
                 )
                 if repository_node:
-                    self.create_relationship(repository_node, "has", node)
+                    self.create_relationship(repository_node, HAS, node)
                     self.logger.info(
                         f"Linked branch {data['id']} to repository {branch.repository}"
                     )

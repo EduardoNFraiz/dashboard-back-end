@@ -3,7 +3,8 @@ import logging
 from celery import shared_task, chain
 from .extract_github.extract_eo import ExtractEO
 from .extract_github.extract_cmpo import ExtractCMPO
-from .extract_github.extract_ciro import ExtractCIRO
+from .extract_github.extract_smpo import ExtractSMPO
+from .extract_github.extract_sro import ExtractSRO
 from django_celery_beat.models import PeriodicTask, IntervalSchedule
 from django.db.utils import OperationalError, ProgrammingError
 import json
@@ -17,7 +18,8 @@ def retrieve_github_data(organization, secret, repository):
     chain(
         retrieve_github_eo_data.si(organization,secret,repository),
         retrieve_github_cmpo_data.si(organization,secret,repository),
-        retrieve_github_ciro_data.si(organization,secret,repository),
+        retrieve_github_smpo_data.si(organization,secret,repository),
+        retrieve_github_sro_data.si(organization,secret,repository),
     )()
 
 
@@ -55,8 +57,15 @@ def retrieve_github_cmpo_data(organization, secret, repository):
     logger.info (f"{organization} - {secret} - {repository}")
 
 @shared_task
-def retrieve_github_ciro_data(organization, secret, repository):
-    logger.info (f" Retrieve CIRO Data")
-    instance = ExtractCIRO(organization=organization, secret=secret, repository=repository)
+def retrieve_github_smpo_data(organization, secret, repository):
+    logger.info (f" Retrieve SMPO Data")
+    instance = ExtractSMPO(organization=organization, secret=secret, repository=repository)
+    instance.run()
+    logger.info (f"{organization} - {secret} - {repository}")
+
+@shared_task
+def retrieve_github_sro_data(organization, secret, repository):
+    logger.info (f" Retrieve SRO Data")
+    instance = ExtractSRO(organization=organization, secret=secret, repository=repository)
     instance.run()
     logger.info (f"{organization} - {secret} - {repository}")

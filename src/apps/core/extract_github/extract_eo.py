@@ -2,21 +2,10 @@ from typing import Any  # noqa: I001
 from .extract_base import ExtractBase  # noqa: I001
 from .logging_config import LoggerFactory  # noqa: I001
 
+from apps.core.extract_github.seon_concepts_dictionary import TEAM, TEAM_MEMBER, PROJECT, PERSON, DONE_FOR, COMPOSED_OF, ALLOCATES, PRESENT_IN, ALLOCATED, HAS
 
 class ExtractEO(ExtractBase):
     """Extracts and loads data related to teams, team members, and projects."""
-
-    TEAM = "team"
-    TEAM_MEMBER = "teammember"
-    PROJECT = "project"
-    PERSON = "person"
-
-    DONE_FOR = "done_for"
-    COMPOSED_OF = "composed_of"
-    ALLOCATES = "allocates"
-    PRESENT_IN = "present_in"
-    ALLOCATED = "allocated"
-    HAS = "has"
 
     team_members: Any = None
     teams: Any = None
@@ -54,8 +43,8 @@ class ExtractEO(ExtractBase):
         self.logger.info("Creating Project nodes and relationships...")
         for project in self.projects.itertuples():
             data = self.transform(project)
-            project_node = self.create_node(data, self.PROJECT, "id")
-            self.create_relationship(self.organization_node, self.HAS, project_node)
+            project_node = self.create_node(data, PROJECT, "id")
+            self.create_relationship(self.organization_node, HAS, project_node)
 
     def __load_team_member(self) -> None:
         """Create Person and TeamMember and links them to teams and the organization."""
@@ -65,29 +54,29 @@ class ExtractEO(ExtractBase):
             data["id"] = member.login
             data["name"] = member.login
 
-            person_node = self.create_node(data, self.PERSON, "id")
-            self.create_relationship(person_node, self.PRESENT_IN, self.organization_node)
+            person_node = self.create_node(data, PERSON, "id")
+            self.create_relationship(person_node, PRESENT_IN, self.organization_node)
 
             if member.team_slug:
                 data["id"] = f"{member.login}-{member.team_slug}"
                 data["name"] = member.login
 
-                team_member_node = self.create_node(data, self.TEAM_MEMBER, "id")
-                team_node = self.sink.get_node(self.TEAM, slug=member.team_slug)
+                team_member_node = self.create_node(data, TEAM_MEMBER, "id")
+                team_node = self.sink.get_node(TEAM, slug=member.team_slug)
 
-                self.create_relationship(team_member_node, self.DONE_FOR, team_node)
-                self.create_relationship(team_node, self.COMPOSED_OF, team_member_node)
-                self.create_relationship(team_member_node, self.ALLOCATES, person_node)
-                self.create_relationship(person_node, self.ALLOCATED, team_member_node)
+                self.create_relationship(team_member_node, DONE_FOR, team_node)
+                self.create_relationship(team_node, COMPOSED_OF, team_member_node)
+                self.create_relationship(team_member_node, ALLOCATES, person_node)
+                self.create_relationship(person_node, ALLOCATED, team_member_node)
 
     def __load_team(self) -> None:
         """Create Team nodes and links them to the organization."""
         self.logger.info("Creating Team nodes and relationships...")
         for team in self.teams.itertuples():
             data = self.transform(team)
-            team_node = self.create_node(data, self.TEAM, "id")
+            team_node = self.create_node(data, TEAM, "id")
             self.logger.info("🔄 Creating Team... %s", team.name)
-            self.create_relationship(self.organization_node, self.HAS, team_node)
+            self.create_relationship(self.organization_node, HAS, team_node)
 
     def run(self) -> None:
         """Orchestrate the full extraction and loading process."""
