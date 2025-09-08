@@ -61,8 +61,9 @@ INSTALLED_APPS = [
 ]
 
 AUTHENTICATION_BACKENDS = (
+    'oauth2_provider.backends.OAuth2Backend',
     'apps.core.custom_auth.EmailBackend',
-    #'django.contrib.auth.backends.ModelBackend',
+    'django.contrib.auth.backends.ModelBackend',
 )
 
 
@@ -73,16 +74,18 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'oauth2_provider.middleware.OAuth2TokenMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'easyaudit.middleware.easyaudit.EasyAuditMiddleware',
-    'oauth2_provider.middleware.OAuth2TokenMiddleware',
 ]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
+
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'dashboard.urls'
 
@@ -217,12 +220,25 @@ LOGGING = {
             "filename": "./logs/django.log",
             "formatter": "app",
         },
+        # Novo handler para telemetria
+        "telemetry_file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": "./logs/telemetry_events.log", # Novo arquivo de log
+            "formatter": "app",
+        },
     },
     "loggers": {
         "django": {
             "handlers": ["file"],
             "level": "INFO",
             "propagate": True
+        },
+        # Novo logger para eventos de telemetria
+        "telemetry_events": {
+            "handlers": ["telemetry_file"],
+            "level": "INFO",
+            "propagate": True,
         },
     },
     "formatters": {

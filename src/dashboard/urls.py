@@ -10,6 +10,7 @@ from drf_yasg import openapi
 from django.contrib import admin
 from django.urls import path
 from apps.core.custom_auth import CustomAuthenticationForm  # Importe o formulário
+from apps.core.api_views import telemetry_event
 
 admin.site.login_form = CustomAuthenticationForm
 
@@ -26,7 +27,8 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/doc/', include('django.contrib.admindocs.urls')),
     path('admin/', admin.site.urls),
-    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')), 
+    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    path('api/telemetry/', telemetry_event, name='telemetry_event'), 
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('apps.core.api_urls')),

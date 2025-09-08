@@ -23,6 +23,83 @@ from rest_framework import status
 from django.http import JsonResponse
 from .repository.IssueRepository import IssueRepository
 
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny 
+from django.contrib.auth import get_user_model
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+import logging
+
+telemetry_logger = logging.getLogger('telemetry_events')
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def telemetry_event(request):
+    """
+    Endpoint para receber eventos de telemetria do frontend.
+    """
+    event_name = request.data.get('event_name')
+    event_data = request.data.get('event_data', {})
+    
+    if not event_name:
+        return Response({'error': 'Event name is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Adicione a telemetria ao logger
+    telemetry_logger.info(f"Event: {event_name}", extra={'data': event_data})
+    
+    return Response({'status': 'Event received.'}, status=status.HTTP_200_OK)
+
+
+
+
+User = get_user_model()
+
+class RegisterAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+        name = request.data.get('name')
+
+        if not all([email, password, name]):
+            return Response(
+                {"error": "E-mail, senha e nome são obrigatórios."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        if User.objects.filter(email__iexact=email).exists():
+            return Response(
+                {"error": "Já existe um usuário com esse e-mail."},
+                status=status.HTTP_409_CONFLICT
+            )
+            
+        if User.objects.filter(username__iexact=name).exists():
+            return Response(
+                {"error": "Este nome já foi escolhido."},
+                status=status.HTTP_409_CONFLICT
+            )
+
+        try:
+            user = User.objects.create_user(
+                username=name,
+                email=email,
+                password=password
+            )
+            
+
+            return Response(
+                {"message": "Usuário cadastrado com sucesso."},
+                status=status.HTTP_201_CREATED
+            )
+
+        except Exception as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
+
 
 class ApplicationViewSet(ModelViewSet):
     queryset = Application.objects.all()
