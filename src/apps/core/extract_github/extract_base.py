@@ -44,6 +44,9 @@ class ExtractBase(ABC):
         self.token = secret
         self.repository = repository
         self.streams = streams
+        token_len = len(self.token)
+
+        logger.info(f"ExtractBase initialized with organization={self.organization}, repository={self.repository}, streams={self.streams}, token_length={token_len}")
 
         # Initialize the Neo4j sink
         try:
@@ -62,8 +65,7 @@ class ExtractBase(ABC):
         # If streams are configured, set up the Airbyte source
         if self.streams:
             logger.info(f"Configuring Airbyte source for streams: {self.streams}")
-            repositories = self.repository
-            if not repositories:
+            if not self.repository:
                 logger.warning("REPOSITORIES environment variable is not set.")
 
             config = {
@@ -79,7 +81,7 @@ class ExtractBase(ABC):
                 logger.warning("ORGANIZATION_ID environment variable is not set.")
 
             self.config_node = self.sink.get_node(f"Config_{self.__class__.__name__}", id=organization_id)
-
+            
             if self.config_node is not None:
                 config["start_date"] = self.config_node["last_retrieve_date"]
                 logger.info(f"Using start_date: {config['start_date']}")
@@ -87,13 +89,14 @@ class ExtractBase(ABC):
             try:
                 self.source = ab.get_source(
                     "source-github",
-                    install_if_missing=True,
+                    install_if_missing=True,                   
                     config=config,
                 )
                 logger.info("Airbyte source-github obtained.")
 
                 # Check if source credentials and config are valid
                 self.source.check()
+
                 logger.info("Airbyte source check passed successfully.")
             except Exception as e:
                 logger.error(f"Failed to configure or check Airbyte source: {e}")

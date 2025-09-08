@@ -22,7 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')), 
     path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('accounts/', include('django.contrib.auth.urls')),
     path('', include('apps.core.api_urls')),
     *static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 ]
