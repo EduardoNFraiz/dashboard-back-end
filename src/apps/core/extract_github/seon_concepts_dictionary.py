@@ -30,7 +30,7 @@ MERGED_INTO = "merged_into"
 ## SRO
 
 USERSTORY= "userstory"
-SCRUMDEVELOPMENTTASK= "scrumdevelopmenttask"
+DEVELOPMENTTASK= "developmenttask"
 BUG= "bug"
 ISSUE= "issue"
 MILESTONE= "milestone"

@@ -3,7 +3,7 @@ from typing import Any  # noqa: I001
 from py2neo import Node  # noqa: I001
 from .logging_config import LoggerFactory  # noqa: I001
 import json  # noqa: I001
-from apps.core.extract_github.seon_concepts_dictionary import PULLREQUEST, CREATED_BY, LABEL, MILESTONE, ISSUE, PULLREQUEST, PERSON, COMMIT,SOURCEREPOSITORY, HAS, PRESENT_IN, LABELED, MERGED, MERGED_INTO, COMMITTED_IN, REVIEWED_BY, ASSIGNED_TO, RELATED_TO, PART_OF # noqa: I001
+from apps.core.extract_github.seon_concepts_dictionary import PULLREQUEST, DEVELOPMENTTASK, CREATED_BY, LABEL, MILESTONE, ISSUE, PULLREQUEST, PERSON, COMMIT,SOURCEREPOSITORY, HAS, PRESENT_IN, LABELED, MERGED, MERGED_INTO, COMMITTED_IN, REVIEWED_BY, ASSIGNED_TO, RELATED_TO, PART_OF # noqa: I001
 
 class ExtractSRO(ExtractBase):
     """Extract and persist data for the SRO dataset using Airbyte and Neo4j."""
@@ -94,7 +94,7 @@ class ExtractSRO(ExtractBase):
     def _create_issue_node(self, data: dict[str, Any], issue: Any) -> Node:
         """Create the Issue node in Neo4j."""
         self.logger.debug("Creating Issue node...")
-        node = self.create_node(data, ISSUE, "id")
+        node = self.create_node(data, DEVELOPMENTTASK, "id")
         self.logger.info(f"Issue node created: {issue.title}")
         return node
 
