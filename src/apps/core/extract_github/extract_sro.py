@@ -3,7 +3,7 @@ from typing import Any  # noqa: I001
 from py2neo import Node  # noqa: I001
 from .logging_config import LoggerFactory  # noqa: I001
 import json  # noqa: I001
-from apps.core.extract_github.seon_concepts_dictionary import CREATED_BY, LABEL, MILESTONE, ISSUE, PULLREQUEST, PERSON, COMMIT,SOURCEREPOSITORY, HAS, PRESENT_IN, LABELED, MERGED, MERGED_INTO, COMMITTED_IN, REVIEWED_BY, ASSIGNED_TO, RELATED_TO, PART_OF # noqa: I001
+from apps.core.extract_github.seon_concepts_dictionary import PULLREQUEST, CREATED_BY, LABEL, MILESTONE, ISSUE, PULLREQUEST, PERSON, COMMIT,SOURCEREPOSITORY, HAS, PRESENT_IN, LABELED, MERGED, MERGED_INTO, COMMITTED_IN, REVIEWED_BY, ASSIGNED_TO, RELATED_TO, PART_OF # noqa: I001
 
 class ExtractSRO(ExtractBase):
     """Extract and persist data for the SRO dataset using Airbyte and Neo4j."""
@@ -69,13 +69,26 @@ class ExtractSRO(ExtractBase):
         """create a link bettween issue and pullrquest"""
         pullrequest = issue.pull_request
         if pullrequest:
-            pull_request_node = self.get_node("PullRequest", url=pullrequest["url"])
-            url = pullrequest["url"]
-            self.logger.debug(
-                    f"Processing ({url} pull request for issue: {issue.title}"
-                )
-            
-            self.create_relationship(pull_request_node, "has", node)
+            pull_request_node = self.get_node(PULLREQUEST, url=pullrequest["url"])
+
+            if pull_request_node:
+
+                url = pullrequest["url"]
+                self.logger.debug(
+                        f"Processing ({url} pull request for issue: {issue.title}"
+                    )
+                
+                self.create_relationship(pull_request_node, "has", node)
+                self.create_relationship(node, PART_OF, pull_request_node)
+                self.logger.info(
+                        f"Linked Issue to Pull Request: {issue.title} - {url}"
+                    )
+            else:
+                ## TODO .. fazer uma chamada de API para buscar o pull request
+                pullrequest["id"] =  pullrequest["url"]
+                pullrequest["problem"] =  True
+                pull_request_node = self.create_node(pullrequest, PULLREQUEST, "id")
+                self.logger.warning(f"Pull Request not found for issue: {issue.title}")
 
         
     def _create_issue_node(self, data: dict[str, Any], issue: Any) -> Node:
@@ -183,23 +196,6 @@ class ExtractSRO(ExtractBase):
                     self.logger.warning(
                         f"Label not found: {label['id']} for issue {issue.title}"
                     )
-
-    def __load_labels(self) -> None:
-        """Create Label nodes and link them to their respective repositories."""
-        self.logger.info("Loading labels...")
-        for label in self.issue_labels.itertuples(index=False):
-            data = self.transform(label)
-            node = self.create_node(data, LABEL, "id")
-            self.logger.info(
-                f"Created Label {label.name} for Repository {label.repository}"
-            )
-            repository_node = self.get_node(SOURCEREPOSITORY, full_name=label.repository)
-            if repository_node:
-                self.create_relationship(repository_node, HAS, node)
-                self.logger.info(f"Linked Label {label.name} to Repository {label.repository}")
-                self.create_relationship(node, PRESENT_IN, repository_node)
-            else:
-                self.logger.warning(f"Repository not found for label: {label.name}")
 
     def __load_pull_request_commit(self) -> None:
         """Link commits to their respective Pull Requests."""
