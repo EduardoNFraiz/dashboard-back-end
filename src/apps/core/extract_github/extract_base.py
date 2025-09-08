@@ -89,8 +89,7 @@ class ExtractBase(ABC):
             try:
                 self.source = ab.get_source(
                     "source-github",
-                    install_if_missing=True,
-                    print_full_log=True,
+                    install_if_missing=True,                   
                     config=config,
                 )
                 logger.info("Airbyte source-github obtained.")

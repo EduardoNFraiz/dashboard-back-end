@@ -67,3 +67,4 @@ class ExtractSMPO(ExtractBase):
         self.__load_milestones()
         self.create_config_domain("smpo")
         self.logger.info("✅ Extraction completed successfully!")
+        return "done"

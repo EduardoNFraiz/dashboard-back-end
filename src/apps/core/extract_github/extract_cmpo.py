@@ -48,7 +48,7 @@ class ExtractCMPO(ExtractBase):
             data = self.transform(repository)
             self.logger.debug("Source Code transformed: %s", data)
             node = self.create_node(data, SOURCEREPOSITORY, "id")
-            self.create_relationship(self.organization_node, self.HAS, node)
+            self.create_relationship(self.organization_node, HAS, node)
             self.logger.info(f"Source Code node created and linked: {data['id']}")
 
     def __load_repository_project(self) -> None:
@@ -159,7 +159,7 @@ class ExtractCMPO(ExtractBase):
             if commit.committer:
                 committer = commit.committer
                 login = committer["login"]
-                user_node = self.get_node(self.PERSON, id=login)
+                user_node = self.get_node(PERSON, id=login)
                 if user_node:
                     self.create_relationship(node, COMMITTED_BY, user_node)
                     self.logger.debug(
@@ -243,3 +243,4 @@ class ExtractCMPO(ExtractBase):
         self.__create_relation_commits()
         self.create_config_domain("cmpo")
         self.logger.info("✅ CMPO extraction completed.")
+        return "done"
