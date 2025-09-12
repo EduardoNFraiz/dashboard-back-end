@@ -16,9 +16,9 @@ logger = logging.getLogger(__name__)
 def retrieve_github_data(organization, secret, repository):
     
     chain(
-        #retrieve_github_eo_data.si(organization,secret,repository),
-        #retrieve_github_cmpo_data.si(organization,secret,repository),
-        #retrieve_github_smpo_data.si(organization,secret,repository),
+        retrieve_github_eo_data.si(organization,secret,repository),
+        retrieve_github_cmpo_data.si(organization,secret,repository),
+        retrieve_github_smpo_data.si(organization,secret,repository),
         retrieve_github_sro_data.si(organization,secret,repository),
     )()
 
@@ -34,7 +34,7 @@ def setup_periodic_tasks(organization, secret, repository):
             name="Retrieve GitHub Data Daily",
             defaults={
                 "interval": schedule,
-                "task": "apps.core.services.retrieve_github_data",
+                "task": "apps.core.tasks.retrieve_github_data",
                 "args": json.dumps([organization, secret, repository]),
             },
         )
