@@ -126,7 +126,7 @@ class ExtractCMPO(ExtractBase):
 
             if repository_node:
                 self.create_relationship(repository_node, HAS, node)
-                self.create_relationship(node, PRESENT_IN, repository_node)
+                # self.create_relationship(node, PRESENT_IN, repository_node)
             else:
                 self.logger.warning(
                     "Repository not found for commit: %s", 
@@ -181,7 +181,7 @@ class ExtractCMPO(ExtractBase):
             branch_node = self.get_node(BRANCH, id=branch_id)
             if branch_node:
                 self.create_relationship(branch_node, HAS, node)
-                self.create_relationship(node, IN, branch_node)
+                # self.create_relationship(node, IN, branch_node)
                 self.logger.debug(f"Linked commit {commit.sha} to branch {branch_id}")
             else:
                 self.logger.warning(f"Branch not found: {branch_id}")
@@ -199,7 +199,7 @@ class ExtractCMPO(ExtractBase):
                 parent_node = self.get_node(COMMIT, id=parent["sha"])
                 if commit_node and parent_node:
                     self.create_relationship(parent_node, IS_PARENT, commit_node)
-                    self.create_relationship(commit_node, HAS_PARENT, parent_node)
+                    #self.create_relationship(commit_node, HAS_PARENT, parent_node)
                     self.logger.debug(f"Linked {parent['sha']} -> {commit.sha}")
                 else:
                     self.logger.info(

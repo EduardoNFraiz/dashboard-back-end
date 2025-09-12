@@ -3,7 +3,7 @@ from typing import Any  # noqa: I001
 from py2neo import Node  # noqa: I001
 from .logging_config import LoggerFactory  # noqa: I001
 import json  # noqa: I001
-from apps.core.extract_github.seon_concepts_dictionary import PULLREQUEST, DEVELOPMENTTASK, CREATED_BY, LABEL, MILESTONE, ISSUE, PULLREQUEST, PERSON, COMMIT,SOURCEREPOSITORY, HAS, PRESENT_IN, LABELED, MERGED, MERGED_INTO, COMMITTED_IN, REVIEWED_BY, ASSIGNED_TO, RELATED_TO, PART_OF # noqa: I001
+from apps.core.extract_github.seon_concepts_dictionary import PULLREQUEST, DEVELOPMENTTASK, CREATED_BY, LABEL, MILESTONE, PULLREQUEST, PERSON, COMMIT,SOURCEREPOSITORY, HAS, PRESENT_IN, LABELED, MERGED, MERGED_INTO, COMMITTED_IN, REVIEWED_BY, ASSIGNED_TO, PART_OF # noqa: I001
 
 class ExtractSRO(ExtractBase):
     """Extract and persist data for the SRO dataset using Airbyte and Neo4j."""
@@ -78,8 +78,8 @@ class ExtractSRO(ExtractBase):
                         f"Processing ({url} pull request for issue: {issue.title}"
                     )
                 
-                self.create_relationship(pull_request_node, "has", node)
-                self.create_relationship(node, PART_OF, pull_request_node)
+                self.create_relationship(pull_request_node, HAS, node)
+               # self.create_relationship(node, PART_OF, pull_request_node)
                 self.logger.info(
                         f"Linked Issue to Pull Request: {issue.title} - {url}"
                     )
@@ -208,7 +208,7 @@ class ExtractSRO(ExtractBase):
             )
             if commit_node and pr_node:
                 self.create_relationship(commit_node, COMMITTED_IN, pr_node)
-                self.create_relationship(pr_node, HAS, commit_node)
+               # self.create_relationship(pr_node, HAS, commit_node)
                 self.logger.info("Linked commit to pull_request")
             else:
                 self.logger.warning(
@@ -244,7 +244,7 @@ class ExtractSRO(ExtractBase):
                 commit_node = self.get_node(COMMIT, sha=pr.merge_commit_sha)
                 if commit_node:
                     self.create_relationship(node, MERGED, commit_node)
-                    self.create_relationship(commit_node, MERGED_INTO, node)
+                    #self.create_relationship(commit_node, MERGED_INTO, node)
 
             self.logger.info(f"Linking users to pull request: {pr.title}")
             self._link_issue_to_users(node, pr)
