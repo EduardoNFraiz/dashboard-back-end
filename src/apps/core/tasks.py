@@ -16,9 +16,9 @@ logger = logging.getLogger(__name__)
 def retrieve_github_data(organization, secret, repository):
     
     chain(
-        retrieve_github_eo_data.si(organization,secret,repository),
-        retrieve_github_cmpo_data.si(organization,secret,repository),
-        retrieve_github_smpo_data.si(organization,secret,repository),
+        #retrieve_github_eo_data.si(organization,secret,repository),
+        #retrieve_github_cmpo_data.si(organization,secret,repository),
+        #retrieve_github_smpo_data.si(organization,secret,repository),
         retrieve_github_sro_data.si(organization,secret,repository),
     )()
 
