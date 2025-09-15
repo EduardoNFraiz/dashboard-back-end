@@ -1,3 +1,4 @@
+from datetime import datetime
 from .extract_base import ExtractBase  # noqa: I001
 from typing import Any  # noqa: I001
 from py2neo import Node  # noqa: I001
@@ -15,7 +16,7 @@ class ExtractSRO(ExtractBase):
     issue_labels: Any = None
     projects: Any = None
 
-    def __init__(self, organization:str, secret:str, repository:str) -> None:
+    def __init__(self, organization:str, secret:str, repository:str,start_date:datetime=None) -> None:
         """Initialize the extractor and define streams to load from Airbyte."""
         self.logger = LoggerFactory.get_logger(__name__)
         streams = [
@@ -24,7 +25,7 @@ class ExtractSRO(ExtractBase):
             "pull_requests",
             "issue_labels",
         ]
-        super().__init__(organization=organization, secret=secret, repository=repository,streams=streams)
+        super().__init__(organization=organization, secret=secret, repository=repository,streams=streams,start_date=start_date)
         self.logger.debug("Initialized Extract SRO with streams: %s", self.streams)
 
     def fetch_data(self) -> None:

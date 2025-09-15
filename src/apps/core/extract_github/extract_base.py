@@ -30,11 +30,12 @@ class ExtractBase(ABC):
     cache: Any = None  # Local cache managed by Airbyte (DuckDB)
     source: Any = None  # Data source connector (Airbyte)
     sink: Any = None  # Data sink, in this case Neo4j (via SinkNeo4j)
+    start_date: datetime = None  # Start date for data extraction
 
     organization:str = None #Organization
     repository:str = None #epository
 
-    def __init__(self, organization:str, secret:str, repository:str, streams:list[str]) -> None:
+    def __init__(self, organization:str, secret:str, repository:str, streams:list[str], start_date:datetime=None) -> None:
         """Post-initialization hook."""
         logger.info("Initializing ExtractBase...")
         load_dotenv()
@@ -45,6 +46,7 @@ class ExtractBase(ABC):
         self.repository = repository
         self.streams = streams
         token_len = len(self.token)
+        self.start_date = start_date
 
         logger.info(f"ExtractBase initialized with organization={self.organization}, repository={self.repository}, streams={self.streams}, token_length={token_len}")
 
@@ -81,6 +83,10 @@ class ExtractBase(ABC):
                 logger.warning("ORGANIZATION_ID environment variable is not set.")
 
             self.config_node = self.sink.get_node(f"Config_{self.__class__.__name__}", id=organization_id)
+
+            if self.start_date is not None:
+                config["start_date"] = self.start_date
+                logger.info(f"Using provided start_date: {config['start_date']}")
             
             if self.config_node is not None:
                 config["start_date"] = self.config_node["last_retrieve_date"]

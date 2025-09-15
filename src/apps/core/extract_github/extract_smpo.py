@@ -1,9 +1,10 @@
+import datetime
 from .extract_base import ExtractBase  # noqa: I001
 from typing import Any  # noqa: I001
 from py2neo import Node  # noqa: I001
 from .logging_config import LoggerFactory  # noqa: I001
 import json  # noqa: I001
-from apps.core.extract_github.seon_concepts_dictionary import CREATED_BY, LABEL, MILESTONE, ISSUE, PULLREQUEST, PERSON, COMMIT,SOURCEREPOSITORY, HAS, PRESENT_IN, LABELED, MERGED, MERGED_INTO, COMMITTED_IN, REVIEWED_BY, ASSIGNED_TO, RELATED_TO, PART_OF # noqa: I001
+from apps.core.extract_github.seon_concepts_dictionary import  MILESTONE, SOURCEREPOSITORY, HAS # noqa: I001
 
 class ExtractSMPO(ExtractBase):
     """Extract and persist data for the SRO dataset using Airbyte and Neo4j."""
@@ -15,13 +16,13 @@ class ExtractSMPO(ExtractBase):
     issue_labels: Any = None
     projects: Any = None
 
-    def __init__(self, organization:str, secret:str, repository:str) -> None:
+    def __init__(self, organization:str, secret:str, repository:str,start_date:datetime=None) -> None:
         """Initialize the extractor and define streams to load from Airbyte."""
         self.logger = LoggerFactory.get_logger(__name__)
         streams = [
             "issue_milestones",
         ]
-        super().__init__(organization=organization, secret=secret, repository=repository,streams=streams)
+        super().__init__(organization=organization, secret=secret, repository=repository,streams=streams, start_date=start_date)
         self.logger.debug("Initialized ExtractSMPO with streams: %s", self.streams)
 
     def fetch_data(self) -> None:
