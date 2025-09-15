@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any  # noqa: I001
 from src.extract.extract_base import ExtractBase  # noqa: I001
 from github import Github, Repository, Commit as GitCommit  # noqa: I001
@@ -9,9 +10,9 @@ from py2neo import Graph  # noqa: I001
 class ExtractCMPOSoftwareArtifact(ExtractBase):
     """Extractor for CMPO Software Artifact."""
 
-    def __init__(self, organization:str, secret:str, repository:str) -> None:
+    def __init__(self, organization:str, secret:str, repository:str, start_date:datetime=None) -> None:
         """Initialize the extractor and define streams to load from Airbyte."""
-        super().__init__(organization=organization, secret=secret, repository=repository)            
+        super().__init__(organization=organization, secret=secret, repository=repository, start_date=start_date)            
         self.graph = Graph(
             "bolt://neo4j:7687",
             auth=(os.getenv("NEO4J_USERNAME", ""), os.getenv("NEO4J_PASSWORD", "")),

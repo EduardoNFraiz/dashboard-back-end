@@ -1,3 +1,4 @@
+import datetime
 from typing import Any  # noqa: I001
 from .extract_base import ExtractBase  # noqa: I001
 from .logging_config import LoggerFactory  # noqa: I001
@@ -18,7 +19,7 @@ class ExtractEO(ExtractBase):
         """Post-initialization hook."""
         self.logger = LoggerFactory.get_logger(__name__)
         streams = ["projects_v2", "teams", "team_members"]
-        super().__init__(organization=organization, secret=secret, repository=repository,streams=streams)
+        super().__init__(organization=organization, secret=secret, repository=repository, streams=streams, start_date=None)
         
 
     def fetch_data(self) -> None:

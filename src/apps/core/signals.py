@@ -21,8 +21,15 @@ def post_save_configuration(sender, instance, created, raw, using, update_fields
     secret = instance.secret
     repository = instance.repository
     user = instance.user
+    start_date=instance.start_date
 
-    retrive_data(application=application, organization=organization, secret=secret, user=user,repository=repository),
+    retrive_data(application=application, 
+                 organization=organization, 
+                 secret=secret, 
+                 user=user,
+                 repository=repository,
+                 start_date=start_date
+                 ),
 
     
     
