@@ -4,6 +4,59 @@ from .extract_base import ExtractBase  # noqa: I001
 from .logging_config import LoggerFactory  # noqa: I001
 import json  # noqa: I001
 from apps.core.extract_github.seon_concepts_dictionary import SOURCEREPOSITORY, PROJECT, PERSON, BRANCH, COMMIT, HAS, PRESENT_IN, CREATED_BY, COMMITTED_BY, IN, IS_PARENT, HAS_PARENT
+from github import Github, Repository, Commit as GitCommit  # noqa: I001
+from celery import shared_task
+from py2neo import Graph  # noqa: I001
+import os  # noqa: I001
+
+@shared_task(autoretry_for=(Exception,), retry_backoff=True)
+def process_commit(sha: str, repository: str, secret: str) -> None:
+    """Fetch files of a given commit from GitHub and create artifacts in Neo4j."""
+    try:
+        logger = LoggerFactory.get_logger(__name__)
+        github = Github(secret)
+        repo: Repository.Repository = github.get_repo(repository)
+        commit_git: GitCommit.Commit = repo.get_commit(sha)
+        commit_id = f"{sha}-{repository}"
+
+        sink = Graph(
+            "bolt://neo4j:7687",
+            auth=(os.getenv("NEO4J_USERNAME", ""), os.getenv("NEO4J_PASSWORD", "")),
+        )
+
+        commit_node = sink.get_node("Commit", id=commit_id)
+        if not commit_node:
+            logger.warning(f"❌ Commit not found in Neo4j: {commit_id}")
+            return
+
+        for file in commit_git.files:
+            if file.sha:
+                data = {
+                    "id": file.sha,
+                    "filename": file.filename,
+                    "status": file.status,
+                    "additions": file.additions,
+                    "deletions": file.deletions,
+                    "changes": file.changes,
+                    "patch": getattr(file, "patch", None),
+                    "raw_url": file.raw_url,
+                    "blob_url": file.blob_url,
+                    "sha": file.sha,
+                }
+
+                file_node = sink.create_node(data, "SoftwareArtifact", "id")
+                sink.create_relationship(commit_node, "has", file_node)
+                sink.create_relationship(file_node, "commited", commit_node)
+
+                logger.info(f"✅ Processed: file {file.sha} | {sha}")
+
+        logger.info(f"✅ Processed: Commit {sha} | {repository}")
+
+    except Exception as e:
+        logger.error(f"⚠️ Error processing {sha} | {repository}: {e}")
+
+
+
 
 class ExtractCMPO(ExtractBase):
     """Extracts CMPO data and stores it in Neo4j."""
@@ -13,6 +66,7 @@ class ExtractCMPO(ExtractBase):
     commits: Any = None
     repositories: Any = None
     projects: Any = None
+    secret: str = None
 
     def __init__(self, organization:str, secret:str, repository:str, start_date:datetime=None) -> None:
         """Initialize the extractor and define streams to load from Airbyte."""
@@ -20,6 +74,7 @@ class ExtractCMPO(ExtractBase):
         streams = ["repositories", "projects_v2", "commits", "branches"]
         super().__init__(organization=organization, secret=secret, repository=repository,streams=streams, start_date=start_date)            
         self.logger.debug("CMPO extractor initialized with streams: %s", self.streams)
+        self.secret = secret
 
     def fetch_data(self) -> None:
         """Fetch data."""
@@ -104,7 +159,7 @@ class ExtractCMPO(ExtractBase):
         else:
             print(f"[ERRO] Tipo inesperado: {type(raw_json)}")
             return []
-
+   
     def __load_commits(self) -> None:
         """Load commits."""
         self.logger.info("Loading commits...")
@@ -133,6 +188,7 @@ class ExtractCMPO(ExtractBase):
                     "Repository not found for commit: %s", 
                     commit.repository
                 )
+            
             # Author
             if commit.author:
                 author = commit.author
@@ -186,6 +242,9 @@ class ExtractCMPO(ExtractBase):
                 self.logger.debug(f"Linked commit {commit.sha} to branch {branch_id}")
             else:
                 self.logger.warning(f"Branch not found: {branch_id}")
+            
+            ## Busca os arquivos do commit e cria os SoftwareArtifact
+            process_commit.delay(sha=commit.sha, repository=commit.repository, secret=self.secret)
             
 
     def __create_relation_commits(self) -> None:

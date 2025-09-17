@@ -7,7 +7,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed  # noqa: I001
 from py2neo import Graph  # noqa: I001
 
 
-class ExtractCMPOSoftwareArtifact(ExtractBase):
+
+
+class ExtractCMPOSoftwareArtifact():
     """Extractor for CMPO Software Artifact."""
 
     def __init__(self, organization:str, secret:str, repository:str, start_date:datetime=None) -> None:
