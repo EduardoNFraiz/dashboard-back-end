@@ -16,7 +16,6 @@ USER = os.getenv("NEO4J_USER")
 PASSWORD = os.getenv("NEO4J_PASSWORD")
 driver = GraphDatabase.driver(URI, auth=(USER, PASSWORD))
 
-
 sys.stdout.reconfigure(encoding="utf-8")
 
 # === Função para remover acentos e caracteres especiais ===
@@ -24,8 +23,6 @@ def remover_acentos(txt):
     if not isinstance(txt, str):
         return txt
     return unicodedata.normalize("NFKD", txt).encode("ASCII", "ignore").decode("utf-8")
-
-
 
 # === Parâmetro de granularidade temporal ===
 TIME_UNIT = "all"
@@ -36,8 +33,8 @@ if TIME_UNIT == "all":
     // Colaboração (não-direcionada)
     MATCH (p1:person)-[r:CO_COMMIT_IN|CO_ASSIGNED]-(p2:person)
     WHERE r.created_at IS NOT NULL 
-    AND coalesce(p1.role, "none") <> "consultant"
-    AND coalesce(p2.role, "none") <> "consultant"  
+      AND coalesce(p1.role, "none") <> "consultant"
+      AND coalesce(p2.role, "none") <> "consultant"  
     WITH "ALL" AS periodo,
          p1.team_slug AS team1,
          p2.team_slug AS team2,
@@ -54,8 +51,8 @@ if TIME_UNIT == "all":
     // Coordenação (direcionada)
     MATCH (c:person)-[r:COORDINATES]->(a:person)
     WHERE r.created_at IS NOT NULL 
-    AND coalesce(c.role, "none") <> "consultant"
-    AND coalesce(a.role, "none") <> "consultant"  
+      AND coalesce(c.role, "none") <> "consultant"
+      AND coalesce(a.role, "none") <> "consultant"  
     WITH "ALL" AS periodo,
          c.team_slug AS team1,
          a.team_slug AS team2,
@@ -72,8 +69,8 @@ if TIME_UNIT == "all":
     // Isolados
     MATCH (p:person)
     WHERE NOT (p)-[:CO_COMMIT_IN|CO_ASSIGNED|COORDINATES]-(:person) 
-    AND p.organization = "leds-conectafapes" 
-    AND coalesce(p.role, "none") <> "consultant"
+      AND p.organization = "leds-conectafapes" 
+      AND coalesce(p.role, "none") <> "consultant"
     WITH "ALL" AS periodo,
          p.team_slug AS team1,
          p.name AS source,
@@ -96,7 +93,7 @@ df_edges = run_query(query_network)
 query_times = """
 MATCH (p:person)
 WHERE p.organization = "leds-conectafapes" 
-AND coalesce(p.role, "none") <> "consultant"
+  AND coalesce(p.role, "none") <> "consultant"
 RETURN DISTINCT p.team_slug AS time, p.name AS pessoa, p.role AS role
 ORDER BY time, pessoa
 """
@@ -124,6 +121,7 @@ for (periodo, team), grupo in df_edges.groupby(["periodo", "team1"]):
     G = nx.DiGraph()
     roles_map = {}
 
+    # Construir grafo do agrupamento atual
     for _, row in grupo.iterrows():
         if row["relation"] == "ISOLATED":
             G.add_node(row["source"], relation="ISOLATED")
@@ -146,7 +144,7 @@ for (periodo, team), grupo in df_edges.groupby(["periodo", "team1"]):
 
     sintese = [f"=== Periodo: {periodo} ({TIME_UNIT}) | Time: {team} ==="]
 
-    # 🔹 Lista de membros
+    # 🔹 Lista de membros do time
     membros_do_time = times_dict.get(team, [])
     if membros_do_time:
         membros_fmt = [f"{p} ({r})" for p, r in sorted(membros_do_time)]
@@ -154,58 +152,78 @@ for (periodo, team), grupo in df_edges.groupby(["periodo", "team1"]):
     else:
         sintese.append(f"Membros do time {team}: nenhum encontrado")
 
-    # === Articulation Points & Boundary Spanners ===
+    # 🔹 Conjunto de nós que pertencem ao time (pelo rótulo "Nome (time)")
     membros_time = [n for n in G.nodes() if f"({team})" in n]
+
+    # === Articulation Points (dentro do time) ===
+    articulation = []
     if membros_time:
         subG_time = G.subgraph(membros_time).copy()
         undirected_sub = subG_time.to_undirected()
-
         articulation = list(nx.articulation_points(undirected_sub))
+
         if articulation:
             sintese.append(
-                f"Pessoas críticas(Truck Factor) (se removidas desconectam dentro do time): {', '.join(articulation)}"
+                f"Pessoas críticas (Truck Factor) dentro do time: {', '.join(sorted(articulation))}"
             )
         else:
-            sintese.append("Nenhuma pessoa(Truck Factor) crítica encontrada dentro do time.")
-
-        # Boundary Spanners = articulações que conectam a outros times
-        boundary_spanners = []
-        for n in articulation:
-            vizinhos = set(G.neighbors(n)) | set(G.predecessors(n))
-            for v in vizinhos:
-                if f"({team})" not in v:   # vizinho fora do time atual
-                    boundary_spanners.append(n)
-                    break
-        if boundary_spanners:
-            sintese.append(f"Boundary Spanners: {', '.join(boundary_spanners)}")
-        else:  
-            sintese.append("Nenhum Boundary Spanner encontrado dentro do time")
+            sintese.append("Nenhuma pessoa crítica (Truck Factor) encontrada dentro do time.")
     else:
-        sintese.append("Nenhum membro encontrado para calcular articulações/boundary spanners")
-    # Lone Wolf
-    isolados = [n for n, d in G.degree() if d == 0]
-    sintese.append(f"Lone Wolf: {', '.join(isolados) if isolados else 'nenhum identificado'}")
+        sintese.append("Nenhum membro do time encontrado no grafo atual.")
 
-# Organizational Silos (somente dentro do time)
+    # === BOUNDARY SPANNERS (ajuste: precisa ligar a >= 2 OUTROS times) ===
+    def team_of(label: str):
+        if isinstance(label, str) and "(" in label and label.endswith(")"):
+            return label.rsplit("(", 1)[1][:-1]
+        return None
+
+    boundary_spanners = []
+    for n in articulation:
+        # só considera articulações do próprio time
+        if team_of(n) != team:
+            continue
+
+        # vizinhos no grafo completo (independente da direção)
+        vizinhos = set(G.successors(n)) | set(G.predecessors(n))
+
+        # times dos vizinhos, excluindo None e o time atual
+        times_vizinhos = {team_of(v) for v in vizinhos}
+        times_vizinhos = {t for t in times_vizinhos if t and t != team}
+
+        # precisa conectar a PELO MENOS 2 times distintos fora do time atual
+        if len(times_vizinhos) >= 2:
+            boundary_spanners.append(n)
+
+    boundary_spanners = sorted(set(boundary_spanners))
+    if boundary_spanners:
+        sintese.append(f"Boundary Spanners (conectam ≥2 outros times): {', '.join(boundary_spanners)}")
+    else:
+        sintese.append("Nenhum Boundary Spanner encontrado dentro do time")
+
+    # === Lone Wolf (nós sem arestas no grafo do agrupamento) ===
+    isolados = [n for n, d in G.degree() if d == 0]
+    sintese.append(f"Lone Wolf: {', '.join(sorted(isolados)) if isolados else 'nenhum identificado'}")
+
+    # === Organizational Silos (somente dentro do time) ===
     if membros_time:
         subG_time = G.subgraph(membros_time).copy()
         undirected_sub = subG_time.to_undirected()
         communities_sub = list(community.greedy_modularity_communities(undirected_sub))
-
         sintese.append(f"Organizational Silos no time: {len(communities_sub)} comunidades")
         for i, c in enumerate(communities_sub, 1):
             sintese.append(f"- Comunidade {i}: {', '.join(sorted(c))}")
     else:
         sintese.append("Organizational Silos: nenhum membro encontrado no time")
+
     analises.append("\n".join(sintese))
-    
+
 driver.close()
 
 # === Exportar para Markdown ===
 with open("analyse_community_smells_by_team.md", "w", encoding="utf-8") as f:
     f.write("# Relatório de Análise de Community Smells por Time\n\n")
 
-    if data_min and data_max:
+    if data_min is not None and data_max is not None:
         f.write(f"**Período analisado:** {data_min.date()} → {data_max.date()}\n\n")
 
     for bloco in analises:

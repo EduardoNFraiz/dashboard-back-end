@@ -190,7 +190,7 @@ for (inicio, fim) in periodos:
     for n in articulation:
         vizinhos = set(G.neighbors(n)) | set(G.predecessors(n))
         times_vizinhos = {v.split("(")[-1].replace(")", "") for v in vizinhos if "(" in v}
-        if len(times_vizinhos) > 1:  # conecta mais de um time
+        if len(times_vizinhos) > 2:  # conecta mais de um time
             boundary_spanners.append(n)
     sintese.append(f"Boundary Spanners: {', '.join(boundary_spanners) if boundary_spanners else 'nenhum'}")
 
