@@ -5,7 +5,7 @@ import os
 # === Conexão com Neo4j ===
 uri = "bolt://localhost:7687"
 user = "neo4j"
-password = "G7q!rX#9Lp@eZ1vK"
+password = ""
 driver = GraphDatabase.driver(uri, auth=(user, password))
 
 OUT_DIR = "."
