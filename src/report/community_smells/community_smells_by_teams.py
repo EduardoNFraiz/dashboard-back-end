@@ -66,17 +66,22 @@ if TIME_UNIT == "all":
 
     UNION
 
-    // Isolados
-    MATCH (p:person)
-    WHERE NOT (p)-[:CO_COMMIT_IN|CO_ASSIGNED|COORDINATES]-(:person) 
-      AND p.organization = "leds-conectafapes" 
-      AND coalesce(p.role, "none") <> "consultant"
+
+    MATCH (c:person)-[r:ISOLATED]->(a:person)
+    WHERE r.created_at IS NOT NULL 
+      AND coalesce(c.role, "none") <> "consultant"
+      AND coalesce(a.role, "none") <> "consultant"  
     WITH "ALL" AS periodo,
-         p.team_slug AS team1,
-         p.name AS source,
-         p.role AS role1
-    RETURN periodo, team1, NULL AS team2, source, NULL AS target, 
-           "ISOLATED" AS relation, NULL AS created_at, role1, NULL AS role2;
+         c.team_slug AS team1,
+         a.team_slug AS team2,
+         c.name AS source,
+         a.name AS target,
+         r.via AS relation,
+         r.created_at AS created_at,
+         c.role AS role1,
+         a.role AS role2
+    RETURN periodo, team1, team2, source, target, relation, created_at, role1, role2
+    
     """
 else:
     query_network = f"..."
@@ -115,8 +120,11 @@ df_edges["target"] = df_edges.apply(lambda x: f"{x['target']} ({x['team2']})" if
 print("Prévia das relações extraídas:")
 print(df_edges.head())
 
+import matplotlib.pyplot as plt
+
 # === Loop por período + team1 ===
 analises = []
+stats = []   # <- guarda métricas por time
 for (periodo, team), grupo in df_edges.groupby(["periodo", "team1"]):
     G = nx.DiGraph()
     roles_map = {}
@@ -144,7 +152,7 @@ for (periodo, team), grupo in df_edges.groupby(["periodo", "team1"]):
 
     sintese = [f"=== Periodo: {periodo} ({TIME_UNIT}) | Time: {team} ==="]
 
-    # 🔹 Lista de membros do time
+    # Lista de membros do time
     membros_do_time = times_dict.get(team, [])
     if membros_do_time:
         membros_fmt = [f"{p} ({r})" for p, r in sorted(membros_do_time)]
@@ -152,46 +160,37 @@ for (periodo, team), grupo in df_edges.groupby(["periodo", "team1"]):
     else:
         sintese.append(f"Membros do time {team}: nenhum encontrado")
 
-    # 🔹 Conjunto de nós que pertencem ao time (pelo rótulo "Nome (time)")
     membros_time = [n for n in G.nodes() if f"({team})" in n]
 
-    # === Articulation Points (dentro do time) ===
+    # Truck Factor (dentro do time)
     articulation = []
     if membros_time:
         subG_time = G.subgraph(membros_time).copy()
         undirected_sub = subG_time.to_undirected()
         articulation = list(nx.articulation_points(undirected_sub))
-
         if articulation:
-            sintese.append(
-                f"Pessoas críticas (Truck Factor) dentro do time: {', '.join(sorted(articulation))}"
-            )
+            sintese.append(f"Pessoas críticas (Truck Factor) dentro do time: {', '.join(sorted(articulation))}")
         else:
             sintese.append("Nenhuma pessoa crítica (Truck Factor) encontrada dentro do time.")
     else:
         sintese.append("Nenhum membro do time encontrado no grafo atual.")
 
-
-
-    # === Boundary Spanners (globais) ===
+    # Boundary Spanners (globais)
     articulation = list(nx.articulation_points(undirected_G))
     boundary_spanners = []
     for n in articulation:
         vizinhos = set(G.neighbors(n)) | set(G.predecessors(n))
         times_vizinhos = {v.split("(")[-1].replace(")", "") for v in vizinhos if "(" in v}
-        if len(times_vizinhos) > 2:  # conecta pelo menos 2 times
+        if len(times_vizinhos) >= 2:
             boundary_spanners.append(n)
 
-    if boundary_spanners:
-        sintese.append(f"Boundary Spanners: {', '.join(boundary_spanners)}")
-    else:
-        sintese.append("Boundary Spanners: nenhum identificado")
+    sintese.append(f"Boundary Spanners: {', '.join(boundary_spanners) if boundary_spanners else 'nenhum identificado'}")
 
-    # === Lone Wolf (nós sem arestas no grafo do agrupamento) ===
+    # Lone Wolves
     isolados = [n for n, d in G.degree() if d == 0]
     sintese.append(f"Lone Wolf: {', '.join(sorted(isolados)) if isolados else 'nenhum identificado'}")
 
-    # === Organizational Silos (somente dentro do time) ===
+    # Organizational Silos
     if membros_time:
         subG_time = G.subgraph(membros_time).copy()
         undirected_sub = subG_time.to_undirected()
@@ -200,18 +199,32 @@ for (periodo, team), grupo in df_edges.groupby(["periodo", "team1"]):
         for i, c in enumerate(communities_sub, 1):
             sintese.append(f"- Comunidade {i}: {', '.join(sorted(c))}")
     else:
+        communities_sub = []
         sintese.append("Organizational Silos: nenhum membro encontrado no time")
 
     analises.append("\n".join(sintese))
+
+    # Coleta para gráfico
+    stats.append({
+        "team": team,
+        "silos": len(communities_sub),
+        "team_size": len(membros_do_time), 
+        "truck": len(articulation),
+        "boundary": len(boundary_spanners),
+        "lone": len(isolados)
+    })
 
 driver.close()
 
 # === Exportar para Markdown ===
 with open("./reports/analyse_community_smells_by_team.md", "w", encoding="utf-8") as f:
     f.write("# Relatório de Análise de Community Smells por Time\n\n")
-
     if data_min is not None and data_max is not None:
         f.write(f"**Período analisado:** {data_min.date()} → {data_max.date()}\n\n")
+
+    f.write("# Grafico geral dos times")
+    f.write("![Evolução dos Community Smells](community_smells_por_time.png)") 
+  
 
     for bloco in analises:
         linhas = bloco.splitlines()
@@ -221,5 +234,27 @@ with open("./reports/analyse_community_smells_by_team.md", "w", encoding="utf-8"
             for l in linhas[1:]:
                 f.write(f"- {remover_acentos(l)}\n")
             f.write("\n---\n\n")
+            
+           
 
-print("\n✅ Análise concluída e salva em analyse_community_smells_by_team.md")
+# === Gráfico comparativo por time ===
+df_stats = pd.DataFrame(stats).set_index("team")
+
+fig, ax = plt.subplots(figsize=(20,7))
+
+# Agora inclui também team_size nas barras
+df_stats.plot(kind="bar", ax=ax)
+
+ax.set_title("Community Smells por Time (incluindo tamanho do time)")
+ax.set_ylabel("Quantidade")
+ax.set_xlabel("Times")
+ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
+ax.legend(title="Indicadores", loc="upper right")
+ax.grid(axis="y", linestyle="--", alpha=0.7)
+
+fig.tight_layout()
+fig.savefig("./reports/community_smells_por_time.png", dpi=300)
+
+print("\n✅ Relatório salvo em analyse_community_smells_by_team.md")
+print("📊 Gráfico salvo em community_smells_por_time.png")
+

@@ -10,6 +10,8 @@ from dotenv import load_dotenv
 import os
 from pathlib import Path
 
+
+
 # ===== Carregar variáveis do .env =====
 BASE_DIR = Path(__file__).resolve().parent
 ENV_PATH = BASE_DIR.parent / ".env"
@@ -79,7 +81,7 @@ RETURN c.team_slug AS team1,
        a.team_slug AS team2,
        c.name AS source,
        a.name AS target,
-       "ISOLATED" AS relation,      // ✅ corrigido
+       "ISOLATED" AS relation,      
        r.created_at AS created_at,
        c.role AS role1,
        a.role AS role2
@@ -192,7 +194,7 @@ for (inicio, fim) in periodos:
     for n in articulation:
         vizinhos = set(G.neighbors(n)) | set(G.predecessors(n))
         times_vizinhos = {v.split("(")[-1].replace(")", "") for v in vizinhos if "(" in v}
-        if len(times_vizinhos) > 3:  # conecta mais de dois time
+        if len(times_vizinhos) >= 2:  # conecta mais de dois time
             boundary_spanners.append(n)
     sintese.append(f"Boundary Spanners: {', '.join(boundary_spanners) if boundary_spanners else 'nenhum'}")
 
@@ -231,11 +233,7 @@ for (inicio, fim) in periodos:
 
 driver.close()
 
-# === Exportar relatório ===
-with open("./reports/analyse_community_smells_by_quarter.md", "w", encoding="utf-8") as f:
-    f.write("# Relatório Trimestral de Community Smells\n\n")
-    for bloco in analises:
-        f.write(bloco + "\n\n---\n\n")
+
 
 # === Gráfico ===
 df_stats = pd.DataFrame(stats).set_index("periodo")
@@ -252,7 +250,18 @@ plt.ylabel("Quantidade")
 plt.legend()
 plt.grid(True)
 plt.tight_layout()
-plt.savefig("community_smells_evolucao.png", dpi=300)
+plt.savefig("./reports/community_smells_evolucao.png", dpi=300)
+
+
+# === Exportar relatório ===
+with open("./reports/analyse_community_smells_by_quarter.md", "w", encoding="utf-8") as f:
+    f.write("# Relatório Trimestral de Community Smells\n\n")
+    for bloco in analises:
+        f.write(bloco + "\n\n---\n\n")
+   
+    f.write("# Relatório Trimestral de Community Smells")
+    f.write("![Evolução dos Community Smells](community_smells_evolucao.png)") 
+        
 
 print("\n✅ Relatório trimestral concluído e salvo em analyse_community_smells_by_quarter.md")
 print("📊 Gráfico salvo como community_smells_evolucao.png")
