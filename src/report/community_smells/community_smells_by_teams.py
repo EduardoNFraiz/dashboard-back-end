@@ -171,34 +171,21 @@ for (periodo, team), grupo in df_edges.groupby(["periodo", "team1"]):
     else:
         sintese.append("Nenhum membro do time encontrado no grafo atual.")
 
-    # === BOUNDARY SPANNERS (ajuste: precisa ligar a >= 2 OUTROS times) ===
-    def team_of(label: str):
-        if isinstance(label, str) and "(" in label and label.endswith(")"):
-            return label.rsplit("(", 1)[1][:-1]
-        return None
 
+
+    # === Boundary Spanners (globais) ===
+    articulation = list(nx.articulation_points(undirected_G))
     boundary_spanners = []
     for n in articulation:
-        # só considera articulações do próprio time
-        if team_of(n) != team:
-            continue
-
-        # vizinhos no grafo completo (independente da direção)
-        vizinhos = set(G.successors(n)) | set(G.predecessors(n))
-
-        # times dos vizinhos, excluindo None e o time atual
-        times_vizinhos = {team_of(v) for v in vizinhos}
-        times_vizinhos = {t for t in times_vizinhos if t and t != team}
-
-        # precisa conectar a PELO MENOS 2 times distintos fora do time atual
-        if len(times_vizinhos) >= 2:
+        vizinhos = set(G.neighbors(n)) | set(G.predecessors(n))
+        times_vizinhos = {v.split("(")[-1].replace(")", "") for v in vizinhos if "(" in v}
+        if len(times_vizinhos) > 2:  # conecta pelo menos 2 times
             boundary_spanners.append(n)
 
-    boundary_spanners = sorted(set(boundary_spanners))
     if boundary_spanners:
-        sintese.append(f"Boundary Spanners (conectam ≥2 outros times): {', '.join(boundary_spanners)}")
+        sintese.append(f"Boundary Spanners: {', '.join(boundary_spanners)}")
     else:
-        sintese.append("Nenhum Boundary Spanner encontrado dentro do time")
+        sintese.append("Boundary Spanners: nenhum identificado")
 
     # === Lone Wolf (nós sem arestas no grafo do agrupamento) ===
     isolados = [n for n, d in G.degree() if d == 0]
@@ -220,7 +207,7 @@ for (periodo, team), grupo in df_edges.groupby(["periodo", "team1"]):
 driver.close()
 
 # === Exportar para Markdown ===
-with open("analyse_community_smells_by_team.md", "w", encoding="utf-8") as f:
+with open("./reports/analyse_community_smells_by_team.md", "w", encoding="utf-8") as f:
     f.write("# Relatório de Análise de Community Smells por Time\n\n")
 
     if data_min is not None and data_max is not None:

@@ -36,14 +36,24 @@ make report
 
 ## Formula para calulo 
 
+### Visão do time
+
+- **Bottleneck**
 -- **Bottleneck (leaders)**: (Degree centrality >=2 ou betweenes >= 2 ) e role="leader" .
--- **Boundary Spanners**:
-Marcar como boundary spanner se:
-(i) betweenness ≥≥ p90 (ou z-score ≥ 1), e
-(ii) participation coefficient 𝑃(𝑣)≥0.3 P(v)≥0.3–0.5 ou fração de vizinhos em outras comunidades ≥40%
-- **Organizational Silos**: Detecção de comunidades (ex.: modularidade𝑄Q, Louvain/greedy).
-- **Lone Wolf**: Isolado total: deg(𝑣)=0.
-- **Truck Factor**: Articulation points (não-dirigido): nós cuja remoção aumenta nº de componentes.
+-- **Boundary Spanners**: Articulação que conecte a mais de dois times. 
+- **Organizational Silos**: Detecção de comunidades greedy_modularity_communities.
+- **Lone Wolf**: Grau igual a zeo
+- **Truck Factor**: Articulation points (não-dirigido): nós cuja remoção aumenta nº de componentes dentro do time.
+
+
+### Visão por tempo
+-- **Bottleneck (leaders)**: (Degree centrality >=2 ou betweenes >= 2 ) e role="leader" .
+-- **Boundary Spanners**: Articulação que conecte a mais de dois times. 
+- **Organizational Silos**: Detecção de comunidades greedy_modularity_communities.
+- **Lone Wolf**: Grau igual a zeo
+- **Truck Factor**: Articulation points (não-dirigido): nós cuja remoção aumenta nº de componentes dentro do time.
+
+
 
 
 

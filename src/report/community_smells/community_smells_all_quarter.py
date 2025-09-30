@@ -68,19 +68,21 @@ RETURN c.team_slug AS team1,
 
 UNION
 
-// Isolados (sem arestas)
-MATCH (p:person)
-WHERE NOT (p)-[:CO_COMMIT_IN|CO_ASSIGNED|COORDINATES]-(:person) 
-  AND p.organization = "leds-conectafapes" 
-  AND coalesce(p.role, "none") <> "consultant"
-RETURN p.team_slug AS team1,
-       NULL AS team2,
-       p.name AS source,
-       NULL AS target,
-       "ISOLATED" AS relation,
-       NULL AS created_at,
-       p.role AS role1,
-       NULL AS role2
+// Isolados (auto-relação ISOLATED)
+MATCH (c:person)-[r:ISOLATED]->(a:person)
+WHERE r.created_at IS NOT NULL 
+  AND c.organization = "leds-conectafapes" 
+  AND a.organization = "leds-conectafapes" 
+  AND coalesce(c.role, "none") <> "consultant"
+  AND coalesce(a.role, "none") <> "consultant"  
+RETURN c.team_slug AS team1,
+       a.team_slug AS team2,
+       c.name AS source,
+       a.name AS target,
+       "ISOLATED" AS relation,      // ✅ corrigido
+       r.created_at AS created_at,
+       c.role AS role1,
+       a.role AS role2
 """
 
 def run_query(query):
@@ -102,8 +104,6 @@ if pd.isna(data_inicio) or pd.isna(data_fim):
 # Separar isolados globais (created_at = NULL)
 df_isolados = df_edges[df_edges["relation"] == "ISOLATED"].copy()
 
-# === Exportar isolados para CSV ===
-df_isolados = df_edges[df_edges["relation"] == "ISOLATED"].copy()
 
 if not df_isolados.empty:
     df_isolados.to_csv("isolados.csv", index=False, encoding="utf-8")
@@ -128,6 +128,12 @@ while inicio < data_fim:
     fim = inicio + relativedelta(months=3)
     periodos.append((inicio, min(fim, data_fim)))
     inicio = fim
+    
+    
+print("\n📅 Períodos trimestrais detectados:")
+for i, (ini, fim) in enumerate(periodos, start=1):
+    print(f"Trimestre {i}: {ini.date()} → {fim.date()}")
+
 
 analises = []
 stats = []  # para gráfico
@@ -171,15 +177,11 @@ for (inicio, fim) in periodos:
 
     undirected_G = G.to_undirected()
 
-    # === Organizational Silos (somente membros ativos) ===
-    membros_ativos = [n for n, d in G.degree() if d > 0]
-    if membros_ativos:
-        undirected_sub = G.subgraph(membros_ativos).to_undirected()
-        communities_mod = list(community.greedy_modularity_communities(undirected_sub))
-        sintese.append(f"Organizational Silos: {len(communities_mod)} comunidades")
-    else:
-        communities_mod = []
-        sintese.append("Organizational Silos: nenhum membro conectado")
+    # === Organizational Silos (inclui todos os nós, até isolados) ===
+    communities_mod = list(community.greedy_modularity_communities(undirected_G))
+    sintese.append(f"Organizational Silos: {len(communities_mod)} comunidades")
+    for i, c in enumerate(communities_mod, 1):
+        sintese.append(f"- Comunidade {i}: {', '.join(sorted(c))}")
 
     # === Truck Factor ===
     articulation = list(nx.articulation_points(undirected_G))
@@ -190,7 +192,7 @@ for (inicio, fim) in periodos:
     for n in articulation:
         vizinhos = set(G.neighbors(n)) | set(G.predecessors(n))
         times_vizinhos = {v.split("(")[-1].replace(")", "") for v in vizinhos if "(" in v}
-        if len(times_vizinhos) > 2:  # conecta mais de um time
+        if len(times_vizinhos) > 3:  # conecta mais de dois time
             boundary_spanners.append(n)
     sintese.append(f"Boundary Spanners: {', '.join(boundary_spanners) if boundary_spanners else 'nenhum'}")
 

@@ -70,19 +70,22 @@ RETURN c.team_slug AS team1,
 
 UNION
 
-// Isolados
-MATCH (p:person)
-WHERE NOT (p)-[:CO_COMMIT_IN|CO_ASSIGNED|COORDINATES]-(:person) 
-  AND p.organization = "leds-conectafapes" 
-  AND coalesce(p.role, "none") <> "consultant"
-RETURN p.team_slug AS team1,
-       NULL AS team2,
-       p.name AS source,
-       NULL AS target,
-       "ISOLATED" AS relation,
-       NULL AS created_at,
-       p.role AS role1,
-       NULL AS role2
+// Isolados (auto-relação ISOLATED)
+MATCH (c:person)-[r:ISOLATED]->(a:person)
+WHERE r.created_at IS NOT NULL 
+  AND c.organization = "leds-conectafapes" 
+  AND a.organization = "leds-conectafapes" 
+  AND coalesce(c.role, "none") <> "consultant"
+  AND coalesce(a.role, "none") <> "consultant"  
+RETURN c.team_slug AS team1,
+       a.team_slug AS team2,
+       c.name AS source,
+       a.name AS target,
+       "ISOLATED" AS relation,      // ✅ corrigido
+       r.created_at AS created_at,
+       c.role AS role1,
+       a.role AS role2
+ 
 """
 
 def run_query(query):
@@ -114,7 +117,13 @@ roles_map = {}
 
 for _, row in df_edges.iterrows():
     if row["relation"] == "ISOLATED":
-        G.add_node(row["source"], relation="ISOLATED")
+        G.add_node(
+            row["source"],
+            relation="ISOLATED",
+            role=row.get("role1"),
+            via=row.get("via", "none")
+        )
+
     elif row["relation"] in ["CO_COMMIT_IN", "CO_ASSIGNED"]:
         G.add_edge(row["source"], row["target"], relation=row["relation"])
         G.add_edge(row["target"], row["source"], relation=row["relation"])
@@ -125,6 +134,7 @@ for _, row in df_edges.iterrows():
         roles_map[row["source"]] = row["role1"]
     if row.get("role2") and row["target"]:
         roles_map[row["target"]] = row["role2"]
+
 
 analises = ["=== Análise Global de Community Smells ==="]
 
@@ -147,6 +157,7 @@ if G.number_of_nodes() > 0:
     else:
         analises.append("Nenhuma pessoa crítica (Truck Factor) identificada")
 
+
     # === Bottleneck de líderes ===
     degree_centrality = nx.degree_centrality(G)
     betweenness = nx.betweenness_centrality(G, normalized=True)
@@ -166,9 +177,22 @@ if G.number_of_nodes() > 0:
 
     analises.append(f"Bottleneck Líderes: {', '.join(bottlenecks) if bottlenecks else 'nenhum identificado'}")
 
+
+
+
     # === Lone Wolves ===
     isolados = [n for n, d in G.degree() if d == 0]
-    analises.append(f"Lone Wolves: {', '.join(isolados) if isolados else 'nenhum identificado'}")
+    if isolados:
+        isolados_info = []
+        for n in isolados:
+            attrs = G.nodes[n]
+            via = attrs.get("via", "none")
+            role = attrs.get("role", "unknown")
+            isolados_info.append(f"{n} [via={via}, role={role}]")
+        analises.append(f"Lone Wolves: {', '.join(isolados_info)}")
+    else:
+        analises.append("Lone Wolves: nenhum identificado")
+
 
 driver.close()
 
