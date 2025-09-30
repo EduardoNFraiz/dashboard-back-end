@@ -39,7 +39,7 @@ make report
 ### Visão do time
 
 - **Bottleneck**
--- **Bottleneck (leaders)**: (Degree centrality >=2 ou betweenes >= 2 ) e role="leader" .
+-- **Bottleneck (leaders)**: (Degree centrality >=2 ou betweenes >= 2 ) e role="leader" . Tem papel de líder e sua centralidade de grau é 2× maior que a média OU sua centralidade de intermediação (betweenness) é 2× maior que a média.
 -- **Boundary Spanners**: Articulação que conecte a mais de dois times. 
 - **Organizational Silos**: Detecção de comunidades greedy_modularity_communities.
 - **Lone Wolf**: Grau igual a zeo
@@ -47,7 +47,7 @@ make report
 
 
 ### Visão por tempo
--- **Bottleneck (leaders)**: (Degree centrality >=2 ou betweenes >= 2 ) e role="leader" .
+-- **Bottleneck (leaders)**: (Degree centrality >=2 ou betweenes >= 2 ) e role="leader" . Tem papel de líder e sua centralidade de grau é 2× maior que a média OU sua centralidade de intermediação (betweenness) é 2× maior que a média.
 -- **Boundary Spanners**: Articulação que conecte a mais de dois times. 
 - **Organizational Silos**: Detecção de comunidades greedy_modularity_communities.
 - **Lone Wolf**: Grau igual a zeo
