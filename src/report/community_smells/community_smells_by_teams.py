@@ -240,14 +240,14 @@ with open("./reports/analyse_community_smells_by_team.md", "w", encoding="utf-8"
 # === Gráfico comparativo por time ===
 df_stats = pd.DataFrame(stats).set_index("team")
 
-fig, ax = plt.subplots(figsize=(20,7))
+fig, ax = plt.subplots(figsize=(10,8))
 
 # Agora inclui também team_size nas barras
-df_stats.plot(kind="bar", ax=ax)
+df_stats.plot(kind="barh", ax=ax)
 
 ax.set_title("Community Smells por Time (incluindo tamanho do time)")
-ax.set_ylabel("Quantidade")
-ax.set_xlabel("Times")
+ax.set_ylabel("Times")
+ax.set_xlabel("Quantidade")
 ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
 ax.legend(title="Indicadores", loc="upper right")
 ax.grid(axis="y", linestyle="--", alpha=0.7)
