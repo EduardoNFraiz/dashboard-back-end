@@ -99,6 +99,49 @@ class RegisterAPIView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
         
+from rest_framework.permissions import IsAuthenticated
+
+class UserMeView(APIView):
+    permission_classes = [IsAuthenticated] 
+
+    def get(self, request):
+        user = request.user 
+        
+        data = {
+            "name": user.username, 
+            "email": user.email,
+        }
+        
+        return Response(data)
+
+
+from django.contrib.auth.hashers import make_password
+
+class UserUpdateView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request):
+        user = request.user
+        data = request.data.copy()
+
+        if 'name' in data:
+            user.username = data['name'] 
+        
+        if 'email' in data:
+            user.email = data['email']
+
+        if 'password' in data and data['password']:
+            user.password = make_password(data['password'])
+            
+        user.save()
+
+        response_data = {
+            "name": user.username, 
+            "email": user.email,
+            "message": "Profile updated successfully"
+        }
+        
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class ApplicationViewSet(ModelViewSet):
