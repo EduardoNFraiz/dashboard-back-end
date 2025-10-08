@@ -2,39 +2,40 @@ FROM python:3.10-slim-bullseye
 
 # Variáveis de ambiente
 ENV DJANGO_SETTINGS_MODULE=dashboard.settings.local
-#ENV PYTHONPATH=/app
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 ENV DEBUG=true
+ENV PYTHONUNBUFFERED=1
 
 # Define o diretório de trabalho
 WORKDIR /app
 
-# Copia tudo do projeto (raiz, onde está o docker-compose.yml)
-COPY ./src/ .
-COPY .env .
-COPY supervisord.conf .
-# Instala dependências do sistema
-RUN apt-get update && apt-get install -y \
+# Copia arquivos de requisitos primeiro (melhor cache)
+COPY ./src/requirements.txt .
+
+# Instala dependências do sistema e Python em uma única camada
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
-    netcat \
+    netcat-traditional \
     gcc \
     libpq-dev \
     libffi-dev \
-    musl-dev \
     python3-dev \
     supervisor \
-    && rm -rf /var/lib/apt/lists/*
+    && pip install --no-cache-dir -r requirements.txt \
+    && apt-get purge -y --auto-remove build-essential gcc python3-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /root/.cache
 
-# Instala dependências Python
-RUN pip install -r requirements.txt
-
-RUN python manage.py collectstatic --noinput --no-post-process
-RUN mkdir -p /app/logs
-
+# Copia o resto do projeto
+COPY ./src/ .
+COPY .env .
 COPY supervisord.conf /etc/supervisord.conf
-
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
 
+# Configura permissões e coleta arquivos estáticos
+RUN chmod +x /entrypoint.sh \
+    && mkdir -p /app/logs \
+    && python manage.py collectstatic --noinput --no-post-process
+
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["supervisord", "-c", "/etc/supervisord.conf"]
