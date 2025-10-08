@@ -13,6 +13,7 @@ import os  # noqa: I001
 def process_commit(sha: str, repository: str, secret: str) -> None:
     """Fetch files of a given commit from GitHub and create artifacts in Neo4j."""
     try:
+        
         logger = LoggerFactory.get_logger(__name__)
         github = Github(secret)
         repo: Repository.Repository = github.get_repo(repository)
@@ -44,7 +45,7 @@ def process_commit(sha: str, repository: str, secret: str) -> None:
                     "sha": file.sha,
                 }
 
-                file_node = sink.create_node(data, "SoftwareArtifact", "id")
+                file_node = sink.create_node(data, "softwareartifact", "id")
                 sink.create_relationship(commit_node, "has", file_node)
                 sink.create_relationship(file_node, "commited", commit_node)
 
@@ -244,7 +245,7 @@ class ExtractCMPO(ExtractBase):
                 self.logger.warning(f"Branch not found: {branch_id}")
             
             ## Busca os arquivos do commit e cria os SoftwareArtifact
-            process_commit.delay(sha=commit.sha, repository=commit.repository, secret=self.secret)
+            # process_commit.delay(sha=commit.sha, repository=commit.repository, secret=self.secret)
             
 
     def __create_relation_commits(self) -> None:

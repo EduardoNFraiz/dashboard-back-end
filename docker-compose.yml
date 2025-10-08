@@ -51,21 +51,50 @@ services:
       - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
       - NEO4J_dbms_default__database=neo4j
       - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+       # Para exportações APOC para arquivo (opcional):
+      - NEO4J_dbms_security_allow__csv__import__from__file__urls=true
+      - NEO4J_dbms_directories_import=/backups
     ports:
       - "7474:7474"
       - "7687:7687"
     volumes:
       - neo4j_data:/data
       - neo4j_logs:/logs
+      - ./neo4j/backups:/backups   # 👈 Salva diretamente no host!
     healthcheck:
       test: ["CMD-SHELL", "cypher-shell -u neo4j -p ${NEO4J_PASSWORD:-password123} 'RETURN 1'"]
       interval: 10s
       timeout: 5s
       retries: 5
 
+  # Serviço on-demand para gerar dumps (roda e sai)
+  neo4j-backup:
+    image: neo4j:5.19
+    container_name: neo4j_backup_runner
+    depends_on:
+      - neo4j
+    environment:
+      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+      # Se quiser escolher outro DB, defina aqui:
+      # - NEO4J_DB=neo4j
+    volumes:
+      - neo4j_data:/data
+      - ./neo4j/backups:/backups   # 👈 Bind mount igual ao neo4j
+    entrypoint: ["/bin/sh", "-lc"]
+    command: >
+      '/var/lib/neo4j/bin/neo4j-admin database dump
+      --to-path=/backups
+      --overwrite-destination=true
+      ${NEO4J_DB:-neo4j};
+      ls -lh /backups'
+
+
+
 volumes:
   postgres_data:
   neo4j_data:
     driver: local
   neo4j_logs:
+    driver: local
+  neo4j_backups:
     driver: local
