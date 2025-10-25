@@ -29,7 +29,7 @@ class Configuration(models.Model):
     repository = models.CharField(max_length=300, null=True, blank=True)
     organization_configuration = models.ForeignKey(Organization, blank=True, null=True, on_delete=models.CASCADE, related_name="organization_%(class)s")
     application_configuration = models.ForeignKey(Application, blank=True, null=True, on_delete=models.CASCADE, related_name="application_%(class)s")
-    '''start_date = models.DateTimeField(blank=True, null=True)'''
+    start_date = models.DateTimeField(blank=True, null=True)
     
 
     def __str__(self):
