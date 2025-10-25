@@ -69,3 +69,4 @@ def retrieve_github_sro_data(organization, secret, repository,start_date=None):
     instance = ExtractSRO(organization=organization, secret=secret, repository=repository, start_date=start_date)
     instance.run()
     logger.info (f"{organization} - {secret} - {repository}")
+
