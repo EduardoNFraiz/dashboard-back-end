@@ -187,6 +187,34 @@ classDiagram
 | **RN-03** | **Histórico** | Manter log de quando o dado foi extraído/atualizado (`updated_at`). | Database |
 | **RN-04** | **Observabilidade** | Todas as ações (Start, End, Error) devem ser logadas com Contexto. | System-wide |
 | **RN-05** | **Idempotência Estrita (SigPesq)** | Se um Pesquisador (por email) ou Grupo de Pesquisa (por nome) já existir, o sistema deve ignorar a criação e não realizar atualizações destas entidades base. | Load Layer (Strategies) |
+
+## 5.1 Análise de API
+- [ ] Implementar Repositórios para as entidades principais.
+
+### US-020 – Prover Web Service para o Domínio EO
+```yaml
+id: US-020
+milestone: R5
+prioridade: Alta
+tamanho: 8
+origem: [RF-18, RF-19]
+tags: [type:feature, area:backend, area:eo, area:api]
+dependencias: [US-019]
+modulos_afetados: [src/apps/eo/serializers.py, src/apps/eo/api_views.py, src/apps/eo/api_urls.py]
+```
+
+#### Descrição
+Expor as entidades do domínio EO através de uma API REST seguindo o padrão do app `core`.
+
+#### Critérios de Aceitação
+- **Funcional**:
+    - [ ] Endpoints implementados: `/eo/persons/`, `/eo/teams/`, `/eo/memberships/`, `/eo/roles/`, `/eo/projects/`.
+    - [ ] Suporte a CRUD completo via ViewSets.
+    - [ ] Filtros implementados para lista de membros por time.
+- **TDD**:
+    - [ ] Testes de integração para cada endpoint (GET, POST, PUT, DELETE).
+- **Design Patterns**:
+    - [ ] Uso de Serializers do DRF para representação de dados.
 | **RN-06** | **Geração de Mart** | O Data Mart de Áreas deve ser gerado consultando diretamente o Banco de Dados via Controllers, garantindo dados em tempo real. | Transform Layer |
 
 ---

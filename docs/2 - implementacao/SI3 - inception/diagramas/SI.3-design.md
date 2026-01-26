@@ -184,6 +184,19 @@ class IMartSink(ABC):
 
 ---
 
-## 7. Rastreabilidade
+### 7.2 API Contracts (EO)
+Endpoints seguindo o padrão REST do app `core`.
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/eo/person/` | GET, POST | List/Create Persons |
+| `/api/eo/team/` | GET, POST | List/Create Teams |
+| `/api/eo/membership/` | GET, POST | List/Create Memberships |
+| `/api/eo/role/` | GET, POST | List/Create Roles |
+| `/api/eo/project/` | GET, POST | List/Create Projects |
+
+---
+
+## 8. Rastreabilidade
 - **SI.1 Requirements**: Mapeados para **Flows**.
 - **SI.2 API/DB**: Mapeados para **Sinks** e **Domain**.

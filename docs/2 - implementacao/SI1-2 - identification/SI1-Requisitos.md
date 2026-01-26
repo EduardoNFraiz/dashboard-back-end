@@ -36,6 +36,8 @@ O **Horizon ETL** é uma infraestrutura de dados que automatiza a coleta de info
 | **RF-04** | O sistema deve extrair dados de execução (Projetos/Bolsas/Compras) da FAPES. | Dados financeiros e de bolsistas vinculados persistidos. | PM1.3 (R3) |
 | **RF-05** | O sistema deve coletar metadados do Google Scholar. | Citações e índice-h atualizados. | PM1.3 (R4) |
 | **RF-06** | O sistema deve normalizar nomes de autores e instituições. | Entidades duplicadas fundidas (Merge) em ID único. | Arq. |
+| **RF-18** | O sistema deve prover endpoints REST para CRUD das entidades EO (Person, Team, Membership, etc.). | Endpoints REST para Person, Team, Membership (e outras entidades EO) implementados e funcionais (Create, Read, Update, Delete). | User Req. |
+| **RF-19** | O sistema deve suportar filtragem e busca de membros por equipe e função através da API. | API permite filtrar membros por `team_id` e `role_id` (ou `role_name`). | User Req. |
 | **RF-07** | O sistema deve exportar dados de grupos de pesquisa de uma Unidade Organizacional para JSON. | Arquivo JSON gerado seguindo schema do ResearchGroup. | User Req. |
 | **RF-08** | O sistema deve exportar dados canônicos (Organização, Campus, Áreas) para arquivos JSON separados, permitindo filtragem por Campus. | Arquivos `organizations.json`, `campuses.json`, `knowledge_areas.json` gerados. Filtro de Campus suportado. | User Req. |
 | **RF-09** | O sistema deve extrair e atualizar dados de grupos de pesquisa do CNPq DGP (identificação, linhas de pesquisa, membros). | Dados do grupo (espelho), membros e **linhas de pesquisa (mapeadas para Áreas do Conhecimento)** atualizados no banco de dados via `dgp_cnpq_lib`. | User Req. |
