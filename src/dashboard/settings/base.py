@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 # 3rd-party Apps
     'django_cpf_cnpj',
     'easyaudit',    
+    'apps.eo',
     'rest_framework', 
     'rest_framework.authtoken',
     'oauth2_provider',
