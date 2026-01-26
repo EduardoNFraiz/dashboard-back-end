@@ -6,7 +6,7 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework import filters
 import django_filters.rest_framework
 
-from apps.core.pagination import CustomPagination
+from .pagination import EOCustomPagination
 from .models import (
     Person, TeamMember, Team, OrganizationalRole, 
     TeamMembership, Project, TeamPurpose,

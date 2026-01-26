@@ -7,3 +7,6 @@ class EoConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'apps.eo'
     label = 'eo'
+
+    def ready(self):
+        import apps.eo.signals

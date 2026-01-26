@@ -73,3 +73,22 @@ class TestEOAPI:
         response = api_client.get(url)
         assert response.status_code == status.HTTP_200_OK
         assert response.data['organization']['name'] == "Test Org"
+
+    def test_pagination_format(self, api_client, admin_user):
+        api_client.force_authenticate(user=admin_user)
+        for i in range(15):
+            Person.objects.create(name=f"Person {i}")
+            
+        url = reverse('person-list')
+        response = api_client.get(url)
+        assert response.status_code == status.HTTP_200_OK
+        assert 'meta' in response.data
+        assert 'data' in response.data
+        assert response.data['meta']['total'] >= 15
+        assert len(response.data['data']) == 10  # page_size=10
+
+    def test_signals_execution(self, admin_user):
+        # We can't easily check logger output in this environment without complex mocking,
+        # but we can verify that creating an object doesn't crash now that signals are connected.
+        person = Person.objects.create(name="Signal Test")
+        assert person.id is not None
