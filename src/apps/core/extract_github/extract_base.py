@@ -50,13 +50,14 @@ class ExtractBase(ABC):
 
         logger.info(f"ExtractBase initialized with organization={self.organization}, repository={self.repository}, streams={self.streams}, token_length={token_len}")
 
-        # Initialize the Neo4j sink
+        # Initialize the sink (Neo4j by default, but can be overridden)
         try:
-            self.sink = SinkNeo4j()
-            logger.info("Neo4j sink initialized successfully.")
+            self.sink = self.initialize_sink()
+            if self.sink:
+                logger.info(f"{self.sink.__class__.__name__} initialized successfully.")
         except Exception as e:
-            logger.error(f"Failed to initialize Neo4j sink: {e}")
-            raise
+            logger.warning(f"Default sink initialization failed: {e}. Subclasses may provide their own sink.")
+            self.sink = None
 
         # Load GitHub token from .env
         if not self.token:
@@ -78,40 +79,55 @@ class ExtractBase(ABC):
             }
             logger.debug(f"Airbyte source initial config: {config}")
 
+        # Load retrieve date configuration if possible
+        if self.sink:
             organization_id = self.organization
-            if not organization_id:
-                logger.warning("ORGANIZATION_ID environment variable is not set.")
+            self.config_node = self.get_config(organization_id)
 
-            self.config_node = self.sink.get_node(f"Config_{self.__class__.__name__}", id=organization_id)
+            if self.start_date is None and self.config_node is not None:
+                # Handle both dict-like (Neo4j) and object-like (Django) configs
+                if hasattr(self.config_node, 'get'):
+                    self.start_date = self.config_node.get("last_retrieve_date")
+                else:
+                    self.start_date = getattr(self.config_node, "last_retrieve_date", None)
+                
+                if self.start_date:
+                    config["start_date"] = self.start_date
+                    logger.info(f"Using start_date from config: {config['start_date']}")
 
-            if self.start_date is not None:
-                config["start_date"] = self.start_date
-                logger.info(f"Using provided start_date: {config['start_date']}")
-            
-            if self.config_node is not None:
-                config["start_date"] = self.config_node["last_retrieve_date"]
-                logger.info(f"Using start_date: {config['start_date']}")
-            
-            try:
-                self.source = ab.get_source(
-                    "source-github",
-                    install_if_missing=True,                   
-                    config=config,
-                )
-                logger.info("Airbyte source-github obtained.")
+        try:
+            self.source = ab.get_source(
+                "source-github",
+                install_if_missing=True,                   
+                config=config,
+            )
+            logger.info("Airbyte source-github obtained.")
 
-                # Check if source credentials and config are valid
-                self.source.check()
-                logger.info("Airbyte source check passed successfully.")
-            except Exception as e:
-                logger.error(f"Failed to configure or check Airbyte source: {e}")
-                raise
-        else:
-            logger.info("No Airbyte streams configured. Skipping Airbyte source setup.")
+            # Check if source credentials and config are valid
+            self.source.check()
+            logger.info("Airbyte source check passed successfully.")
+        except Exception as e:
+            logger.error(f"Failed to configure or check Airbyte source: {e}")
+            raise
 
-        # Load the organization node from Neo4j or create it
-        self.__load_organization()
+        # Load the organization node if sink is present
+        if self.sink and hasattr(self.sink, 'save_node'):
+            self.__load_organization()
+        
         logger.info("ExtractBase initialization complete.")
+
+    def initialize_sink(self) -> Any:
+        """Initialize the default sink. Overridden by subclasses if needed."""
+        try:
+            return SinkNeo4j()
+        except Exception:
+            return None
+
+    def get_config(self, organization_id: str) -> Any:
+        """Retrieve configuration for this extractor. Overridden by subclasses."""
+        if self.sink and hasattr(self.sink, 'get_node'):
+            return self.sink.get_node(f"Config_{self.__class__.__name__}", id=organization_id)
+        return None
 
     def load_data(self) -> None:
         """Load data from the Airbyte source into the local cache."""

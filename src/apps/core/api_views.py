@@ -30,6 +30,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 import logging
 
+#from .repository.queriestheband import Queriestheband
+
+
 telemetry_logger = logging.getLogger('telemetry_events')
 
 @api_view(['POST'])
@@ -142,7 +145,6 @@ class UserUpdateView(APIView):
         }
         
         return Response(response_data, status=status.HTTP_200_OK)
-
 
 class ApplicationViewSet(ModelViewSet):
     queryset = Application.objects.all()

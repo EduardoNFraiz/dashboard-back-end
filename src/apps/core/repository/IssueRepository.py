@@ -236,3 +236,4 @@ class IssueRepository(Neo4jRepository):
         raw_data = self.execute(self.ISSUE_WITH_AND_WITHOUT_MILESTONE, skip=skip, limit=limit)
         return raw_data
     
+
